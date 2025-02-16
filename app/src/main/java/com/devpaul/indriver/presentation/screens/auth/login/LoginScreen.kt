@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -52,7 +53,7 @@ fun LoginScreen() {
                 .fillMaxSize()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color(0xFF5F961C), Color(0xFF8BC34A))
+                        colors = listOf(Color(0xFF25776F), Color(0xFF030303))
                     )
                 )
                 .padding(paddingValues)
@@ -63,22 +64,22 @@ fun LoginScreen() {
                 horizontalAlignment = Alignment.Start,
             ) {
                 Text(
-                    text = "Iniciar Sesion",
+                    text = "Inicio",
                     color = Color.White,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .rotate(90f)
-                        .padding(top = 116.dp)
+                        .padding(top = 16.dp)
                 )
                 Spacer(modifier = Modifier.height(140.dp))
                 Text(
-                    text = "Registrarse",
+                    text = "Registro",
                     color = Color.White,
                     fontSize = 24.sp,
                     modifier = Modifier
                         .rotate(90f)
-                        .padding(top = 64.dp)
+                        .padding(top = 36.dp)
                 )
                 Spacer(modifier = Modifier.height(100.dp))
             }
@@ -86,63 +87,83 @@ fun LoginScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 60.dp, bottom = 36.dp)
+                    .padding(start = 60.dp, bottom = 30.dp)
                     .background(
                         brush = Brush.linearGradient(
-                            colors = listOf(Color(0xFF66B400), Color(0xFFB5D5A4))
+                            colors = listOf(Color(0xFF009688), Color(0xFF002C29))
                         ),
-                        shape = RoundedCornerShape(topStart = 30.dp, bottomStart = 30.dp)
+                        shape = RoundedCornerShape(bottomStart = 30.dp)
                     )
             ) {
                 Column(
-                    modifier = Modifier.statusBarsPadding()
+                    modifier = Modifier
+                        .statusBarsPadding()
+                        .padding(end = 25.dp, start = 25.dp),
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(
                         text = "Bienvenido",
                         color = Color.White,
-                        fontSize = 24.sp,
+                        fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = "de nuevo",
+                        text = "de nuevo...",
                         color = Color.White,
-                        fontSize = 24.sp,
+                        fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
                     )
-                    Image(
+                    Box(
                         modifier = Modifier
-                            .size(150.dp)
-                            .padding(16.dp),
-                        painter = painterResource(id = R.drawable.car_white),
-                        contentDescription = "",
-                    )
+                            .fillMaxWidth()
+                            .padding(top = 10.dp, end = 4.dp),
+                    ) {
+                        Image(
+                            modifier = Modifier
+                                .size(140.dp)
+                                .align(Alignment.CenterEnd),
+                            painter = painterResource(id = R.drawable.car_white),
+                            contentDescription = "",
+                        )
+                    }
                     Text(
-                        text = "Log in",
+                        text = "Inicio de sesión",
                         color = Color.White,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                     )
+                    Spacer(modifier = Modifier.height(50.dp))
                     TextField(
                         value = email,
                         onValueChange = { email = it },
                         label = { Text("Email") }
                     )
-
+                    Spacer(modifier = Modifier.height(16.dp))
                     TextField(
                         value = password,
                         onValueChange = { password = it },
                         label = { Text("Password") }
                     )
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier.padding(16.dp)
+                    Spacer(modifier = Modifier.weight(1f))
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("Iniciar Sesion")
+                        Button(
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .width(200.dp)
+                                .height(50.dp),
+                            onClick = { /*TODO*/ },
+                            colors = ButtonDefaults.buttonColors(Color.Black)
+                        ) {
+                            Text("Iniciar Sesion", fontSize = 16.sp)
+                        }
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Spacer(
                             modifier = Modifier
@@ -154,7 +175,7 @@ fun LoginScreen() {
                             modifier = Modifier.padding(horizontal = 8.dp),
                             text = "O",
                             color = Color.White,
-                            fontSize = 16.sp,
+                            fontSize = 20.sp,
                         )
                         Spacer(
                             modifier = Modifier
@@ -163,22 +184,25 @@ fun LoginScreen() {
                                 .background(Color.White)
                         )
                     }
-
+                    Spacer(modifier = Modifier.height(10.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         Text(
+                            modifier = Modifier.padding(horizontal = 8.dp),
                             text = "No tienes cuenta?",
                             color = Color.White,
                             fontSize = 16.sp,
                         )
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = "Registrate",
                             color = Color.White,
                             fontSize = 16.sp,
                         )
                     }
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
