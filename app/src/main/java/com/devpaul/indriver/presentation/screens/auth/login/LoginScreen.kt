@@ -34,7 +34,9 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devpaul.indriver.R
@@ -190,7 +192,7 @@ fun LoginScreen() {
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         Text(
-                            modifier = Modifier.padding(horizontal = 8.dp),
+                            modifier = Modifier.padding(horizontal = 4.dp),
                             text = "No tienes cuenta?",
                             color = Color.White,
                             fontSize = 16.sp,
@@ -200,6 +202,9 @@ fun LoginScreen() {
                             text = "Registrate",
                             color = Color.White,
                             fontSize = 16.sp,
+                            style = TextStyle(
+                                textDecoration = TextDecoration.Underline
+                            )
                         )
                     }
                     Spacer(modifier = Modifier.height(20.dp))
