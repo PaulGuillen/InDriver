@@ -8,7 +8,7 @@ _Comenzando.._
 
 ### Pre-requisitos 📋
 
-_Comendazndo.._
+_Comenzando.._
 
 ## Ejecutando los diseños ⚙️
 _*Vista Login*_
