@@ -14,5 +14,5 @@ _Comenzando.._
 _*Vista Login*_
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/2408a8f3-80ce-4063-9b90-07ca1567d198" width="320" height="700"/>
+  <img src="https://github.com/user-attachments/assets/808c20bf-67d4-4387-8032-c0e488755dbc" width="320" height="700"/>
 </p>
