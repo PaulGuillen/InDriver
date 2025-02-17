@@ -2,6 +2,7 @@ package com.devpaul.indriver.presentation.screens.auth.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,11 +44,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.devpaul.indriver.R
 import com.devpaul.indriver.presentation.components.DefaultTextField
+import com.devpaul.indriver.presentation.navigation.screen.auth.AuthScreen
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navHostController: NavHostController) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -71,22 +75,23 @@ fun LoginScreen() {
                 horizontalAlignment = Alignment.Start,
             ) {
                 Text(
+                    modifier = Modifier
+                        .rotate(90f)
+                        .padding(top = 16.dp),
                     text = "Inicio",
                     color = Color.White,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .rotate(90f)
-                        .padding(top = 16.dp)
                 )
                 Spacer(modifier = Modifier.height(140.dp))
                 Text(
-                    text = "Registro",
-                    color = Color.White,
-                    fontSize = 24.sp,
                     modifier = Modifier
                         .rotate(90f)
                         .padding(top = 36.dp)
+                        .clickable { navHostController.navigate(route = AuthScreen.Register.routes) },
+                    text = "Registro",
+                    color = Color.White,
+                    fontSize = 24.sp,
                 )
                 Spacer(modifier = Modifier.height(100.dp))
             }
@@ -229,5 +234,5 @@ fun LoginScreen() {
 @Preview
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(navHostController = rememberNavController())
 }

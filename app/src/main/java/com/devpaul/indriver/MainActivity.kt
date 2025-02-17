@@ -4,37 +4,23 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.devpaul.indriver.presentation.screens.auth.login.LoginScreen
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.devpaul.indriver.presentation.navigation.graph.root.RootNavGraph
 import com.devpaul.indriver.ui.theme.InDriverTheme
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var navHostController: NavHostController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             InDriverTheme {
-                LoginScreen()
+                navHostController = rememberNavController()
+                RootNavGraph(navHostController = navHostController)
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    InDriverTheme {
-        Greeting("Android")
     }
 }
