@@ -18,11 +18,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Email
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,10 +38,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devpaul.indriver.R
+import com.devpaul.indriver.presentation.components.DefaultTextField
 
 @Composable
 fun LoginScreen() {
@@ -135,16 +140,23 @@ fun LoginScreen() {
                         fontWeight = FontWeight.Bold,
                     )
                     Spacer(modifier = Modifier.height(50.dp))
-                    TextField(
+                    DefaultTextField(
+                        modifier = Modifier,
                         value = email,
+                        label = "Email",
+                        icon = Icons.Outlined.Email,
                         onValueChange = { email = it },
-                        label = { Text("Email") }
+                        keyboardType = KeyboardType.Email,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    TextField(
+                    DefaultTextField(
+                        modifier = Modifier,
                         value = password,
+                        label = "Password",
+                        icon = Icons.Outlined.Lock,
                         onValueChange = { password = it },
-                        label = { Text("Password") }
+                        keyboardType = KeyboardType.Password,
+                        hideText = true,
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Box(
@@ -212,4 +224,10 @@ fun LoginScreen() {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    LoginScreen()
 }
