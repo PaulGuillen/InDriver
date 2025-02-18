@@ -22,8 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +35,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.devpaul.indriver.R
+import com.devpaul.indriver.presentation.components.DefaultButton
 import com.devpaul.indriver.presentation.components.DefaultTextField
 import com.devpaul.indriver.presentation.navigation.screen.auth.AuthScreen
 
@@ -78,7 +78,7 @@ fun LoginScreen(navHostController: NavHostController) {
                     modifier = Modifier
                         .rotate(90f)
                         .padding(top = 16.dp),
-                    text = "Inicio",
+                    text = stringResource(R.string.home),
                     color = Color.White,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
@@ -89,7 +89,7 @@ fun LoginScreen(navHostController: NavHostController) {
                         .rotate(90f)
                         .padding(top = 36.dp)
                         .clickable { navHostController.navigate(route = AuthScreen.Register.routes) },
-                    text = "Registro",
+                    text = stringResource(R.string.register),
                     color = Color.White,
                     fontSize = 24.sp,
                 )
@@ -113,14 +113,14 @@ fun LoginScreen(navHostController: NavHostController) {
                         .padding(end = 25.dp, start = 25.dp),
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
-                    Text(
-                        text = "Bienvenido",
+                        Text(
+                        text = stringResource(R.string.welcome),
                         color = Color.White,
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = "de nuevo...",
+                        text = stringResource(R.string.again),
                         color = Color.White,
                         fontSize = 26.sp,
                         fontWeight = FontWeight.Bold,
@@ -148,7 +148,7 @@ fun LoginScreen(navHostController: NavHostController) {
                     DefaultTextField(
                         modifier = Modifier,
                         value = email,
-                        label = "Email",
+                        label = stringResource(R.string.email),
                         icon = Icons.Outlined.Email,
                         onValueChange = { email = it },
                         keyboardType = KeyboardType.Email,
@@ -157,27 +157,18 @@ fun LoginScreen(navHostController: NavHostController) {
                     DefaultTextField(
                         modifier = Modifier,
                         value = password,
-                        label = "Password",
+                        label = stringResource(R.string.password),
                         icon = Icons.Outlined.Lock,
                         onValueChange = { password = it },
                         keyboardType = KeyboardType.Password,
                         hideText = true,
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    Box(
+                    DefaultButton(
                         modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Button(
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .width(200.dp)
-                                .height(50.dp),
-                            onClick = { /*TODO*/ },
-                            colors = ButtonDefaults.buttonColors(Color.Black)
-                        ) {
-                            Text("Iniciar Sesion", fontSize = 16.sp)
-                        }
-                    }
+                        text = stringResource(R.string.login),
+                        onClick = { },
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -210,13 +201,14 @@ fun LoginScreen(navHostController: NavHostController) {
                     ) {
                         Text(
                             modifier = Modifier.padding(horizontal = 4.dp),
-                            text = "No tienes cuenta?",
+                            text = stringResource(R.string.not_have_account),
                             color = Color.White,
                             fontSize = 16.sp,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Registrate",
+                            modifier = Modifier.clickable { navHostController.navigate(route = AuthScreen.Register.routes) },
+                            text = stringResource(R.string.sign_up),
                             color = Color.White,
                             fontSize = 16.sp,
                             style = TextStyle(
