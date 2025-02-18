@@ -9,7 +9,7 @@ import com.devpaul.indriver.presentation.navigation.screen.auth.AuthScreen
 import com.devpaul.indriver.presentation.screens.auth.login.LoginScreen
 import com.devpaul.indriver.presentation.screens.auth.register.RegisterScreen
 
-fun NavGraphBuilder.AuthNavGraph(navHostController: NavHostController) {
+fun NavGraphBuilder.authNavGraph(navHostController: NavHostController) {
     navigation(
         route = Graph.AUTH,
         startDestination = AuthScreen.Login.routes

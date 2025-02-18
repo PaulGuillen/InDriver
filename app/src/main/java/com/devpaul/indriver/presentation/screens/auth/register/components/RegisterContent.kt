@@ -45,6 +45,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.devpaul.indriver.R
@@ -80,12 +81,12 @@ fun RegisterContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start,
         ) {
-
             Text(
                 modifier = Modifier
                     .rotate(90f)
-                    .padding(top = 16.dp)
-                    .clickable { navHostController.navigate(route = AuthScreen.Login.routes) },
+                    .padding(top = 14.dp)
+                    .clickable { navHostController.navigate(route = AuthScreen.Login.routes) }
+                    .zIndex(1f),
                 text = stringResource(R.string.home),
                 color = Color.White,
                 fontSize = 28.sp,
@@ -94,7 +95,8 @@ fun RegisterContent(
             Text(
                 modifier = Modifier
                     .rotate(90f)
-                    .padding(top = 42.dp),
+                    .padding(top = 42.dp)
+                    .clickable { navHostController.navigate(route = AuthScreen.Register.routes) },
                 text = stringResource(R.string.register),
                 color = Color.White,
                 fontSize = 24.sp,
@@ -105,7 +107,6 @@ fun RegisterContent(
 
         Box(
             modifier = Modifier
-                .verticalScroll(rememberScrollState())
                 .padding(start = 60.dp, bottom = 30.dp)
                 .background(
                     brush = Brush.linearGradient(
@@ -117,7 +118,8 @@ fun RegisterContent(
             Column(
                 modifier = Modifier
                     .statusBarsPadding()
-                    .padding(end = 25.dp, start = 25.dp),
+                    .padding(end = 25.dp, start = 25.dp)
+                    .verticalScroll(rememberScrollState()),
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
                 Box(

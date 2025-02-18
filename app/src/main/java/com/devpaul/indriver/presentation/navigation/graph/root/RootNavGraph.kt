@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.devpaul.indriver.presentation.navigation.Graph
-import com.devpaul.indriver.presentation.navigation.graph.auth.AuthNavGraph
+import com.devpaul.indriver.presentation.navigation.graph.auth.authNavGraph
 
 @Composable
 fun RootNavGraph(navHostController: NavHostController) {
@@ -13,6 +13,6 @@ fun RootNavGraph(navHostController: NavHostController) {
         route = Graph.ROOT,
         startDestination = Graph.AUTH
     ) {
-       AuthNavGraph(navHostController)
+       authNavGraph(navHostController)
     }
 }
