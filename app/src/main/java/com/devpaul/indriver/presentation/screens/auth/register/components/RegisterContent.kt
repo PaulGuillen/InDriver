@@ -85,8 +85,7 @@ fun RegisterContent(
                 modifier = Modifier
                     .rotate(90f)
                     .padding(top = 14.dp)
-                    .clickable { navHostController.navigate(route = AuthScreen.Login.routes) }
-                    .zIndex(1f),
+                    .clickable { navHostController.navigate(route = AuthScreen.Login.routes) },
                 text = stringResource(R.string.home),
                 color = Color.White,
                 fontSize = 28.sp,
@@ -95,8 +94,7 @@ fun RegisterContent(
             Text(
                 modifier = Modifier
                     .rotate(90f)
-                    .padding(top = 42.dp)
-                    .clickable { navHostController.navigate(route = AuthScreen.Register.routes) },
+                    .padding(top = 42.dp),
                 text = stringResource(R.string.register),
                 color = Color.White,
                 fontSize = 24.sp,
