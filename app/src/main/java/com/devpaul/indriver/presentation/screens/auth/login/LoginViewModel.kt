@@ -14,6 +14,8 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     var state by mutableStateOf(LoginState())
         private set
 
+    var errorMessage by mutableStateOf<String?>(null)
+
     fun onEmailChanged(email: String) {
         state = state.copy(email = email)
     }
@@ -23,6 +25,34 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onLoginClicked() {
-        Timber.d("Email: ${state.email}, Password: ${state.password}")
+        if (isValidForm()) {
+            Timber.d("Email: ${state.email}, Password: ${state.password}")
+        }
+    }
+
+    private fun isValidForm(): Boolean {
+        errorMessage = null
+
+        if (state.email.isEmpty()) {
+            errorMessage = "Correo requerido"
+            return false
+        }
+
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(state.email).matches()) {
+            errorMessage = "Correo no valido"
+            return false
+        }
+
+        if (state.password.isEmpty()) {
+            errorMessage = "Contraseña requerida"
+            return false
+        }
+
+        if (state.password.length < 6) {
+            errorMessage = "Contraseña debe tener al menos 6 caracteres"
+            return false
+        }
+
+        return true
     }
 }
