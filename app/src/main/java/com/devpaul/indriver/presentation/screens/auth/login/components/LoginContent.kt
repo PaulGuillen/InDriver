@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.devpaul.indriver.R
@@ -50,8 +51,8 @@ import com.devpaul.indriver.presentation.screens.auth.login.LoginViewModel
 fun LoginContent(
     navHostController: NavHostController,
     paddingValues: PaddingValues,
+    vm: LoginViewModel = hiltViewModel(),
 ) {
-    val vm = remember { LoginViewModel() }
     val state = vm.state;
 
     Box(
