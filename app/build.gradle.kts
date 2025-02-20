@@ -26,6 +26,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isMinifyEnabled = false
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -59,4 +62,7 @@ dependencies {
 
     //Navigation
     implementation(libs.androidx.navigation.compose)
+
+    //Timber
+    implementation(libs.timber)
 }

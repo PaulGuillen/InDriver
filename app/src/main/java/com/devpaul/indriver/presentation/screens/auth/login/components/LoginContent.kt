@@ -23,10 +23,7 @@ import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -47,15 +44,15 @@ import com.devpaul.indriver.R
 import com.devpaul.indriver.presentation.components.DefaultButton
 import com.devpaul.indriver.presentation.components.DefaultTextField
 import com.devpaul.indriver.presentation.navigation.screen.auth.AuthScreen
+import com.devpaul.indriver.presentation.screens.auth.login.LoginViewModel
 
 @Composable
 fun LoginContent(
     navHostController: NavHostController,
     paddingValues: PaddingValues,
 ) {
-
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val vm = remember { LoginViewModel() }
+    val state = vm.state;
 
     Box(
         modifier = Modifier
@@ -145,19 +142,19 @@ fun LoginContent(
                 Spacer(modifier = Modifier.height(50.dp))
                 DefaultTextField(
                     modifier = Modifier,
-                    value = email,
+                    value = state.email,
                     label = stringResource(R.string.email),
                     icon = Icons.Outlined.Email,
-                    onValueChange = { email = it },
+                    onValueChange = { vm.onEmailChanged(it) },
                     keyboardType = KeyboardType.Email,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 DefaultTextField(
                     modifier = Modifier,
-                    value = password,
+                    value = state.password,
                     label = stringResource(R.string.password),
                     icon = Icons.Outlined.Lock,
-                    onValueChange = { password = it },
+                    onValueChange = { vm.onPasswordChanged(it) },
                     keyboardType = KeyboardType.Password,
                     hideText = true,
                 )
@@ -165,7 +162,9 @@ fun LoginContent(
                 DefaultButton(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.login),
-                    onClick = { },
+                    onClick = {
+                        vm.onLoginClicked()
+                    },
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(

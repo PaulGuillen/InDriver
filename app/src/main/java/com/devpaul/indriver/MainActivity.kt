@@ -8,6 +8,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.devpaul.indriver.presentation.navigation.graph.root.RootNavGraph
 import com.devpaul.indriver.ui.theme.InDriverTheme
+import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
 
@@ -22,5 +23,6 @@ class MainActivity : ComponentActivity() {
                 RootNavGraph(navHostController = navHostController)
             }
         }
+        Timber.plant(Timber.DebugTree())
     }
 }
