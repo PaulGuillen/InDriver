@@ -25,7 +25,6 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -56,7 +55,7 @@ fun LoginContent(
     paddingValues: PaddingValues,
     vm: LoginViewModel = hiltViewModel(),
 ) {
-    val state = vm.state;
+    val state = vm.state
     val context = LocalContext.current
 
     LaunchedEffect(key1 = vm.errorMessage) {
@@ -68,6 +67,7 @@ fun LoginContent(
           ).show()
         }
     }
+
     Box(
         modifier = Modifier
             .fillMaxSize()

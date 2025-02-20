@@ -1,5 +1,6 @@
 package com.devpaul.indriver.presentation.screens.auth.register.components
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,15 +28,13 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -45,26 +44,34 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.devpaul.indriver.R
 import com.devpaul.indriver.presentation.components.DefaultButton
 import com.devpaul.indriver.presentation.components.DefaultTextField
 import com.devpaul.indriver.presentation.navigation.screen.auth.AuthScreen
+import com.devpaul.indriver.presentation.screens.auth.register.RegisterViewModel
 
 @Composable
 fun RegisterContent(
     navHostController: NavHostController,
     paddingValues: PaddingValues,
+    vm: RegisterViewModel = hiltViewModel(),
 ) {
 
-    var name by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+    val state = vm.state
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = vm.errorMessage) {
+        vm.errorMessage?.let {
+            Toast.makeText(
+                context,
+                it,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -136,56 +143,56 @@ fun RegisterContent(
                 Spacer(modifier = Modifier.height(10.dp))
                 DefaultTextField(
                     modifier = Modifier,
-                    value = name,
+                    value = state.name,
                     label = stringResource(R.string.name),
                     icon = Icons.Outlined.Person,
-                    onValueChange = { name = it },
+                    onValueChange = { vm.onNameChanged(it) },
                     keyboardType = KeyboardType.Text,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 DefaultTextField(
                     modifier = Modifier,
-                    value = lastName,
+                    value = state.lastName,
                     label = stringResource(R.string.last_name),
                     icon = Icons.Outlined.Person,
-                    onValueChange = { lastName = it },
+                    onValueChange = { vm.onLastNameChanged(it) },
                     keyboardType = KeyboardType.Text,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 DefaultTextField(
                     modifier = Modifier,
-                    value = phone,
+                    value = state.phone,
                     label = stringResource(R.string.phone),
                     icon = Icons.Outlined.Phone,
-                    onValueChange = { phone = it },
+                    onValueChange = { vm.onPhoneChanged(it) },
                     keyboardType = KeyboardType.Phone,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 DefaultTextField(
                     modifier = Modifier,
-                    value = email,
+                    value = state.email,
                     label = "Email",
                     icon = Icons.Outlined.Email,
-                    onValueChange = { email = it },
+                    onValueChange = { vm.onEmailChanged(it) },
                     keyboardType = KeyboardType.Email,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 DefaultTextField(
                     modifier = Modifier,
-                    value = password,
+                    value = state.password,
                     label = stringResource(R.string.password),
                     icon = Icons.Outlined.Lock,
-                    onValueChange = { password = it },
+                    onValueChange = { vm.onPasswordChanged(it) },
                     keyboardType = KeyboardType.Password,
                     hideText = true,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 DefaultTextField(
                     modifier = Modifier,
-                    value = confirmPassword,
+                    value = state.confirmPassword,
                     label = stringResource(R.string.confirm_password),
                     icon = Icons.Outlined.Lock,
-                    onValueChange = { confirmPassword = it },
+                    onValueChange = { vm.onConfirmPasswordChanged(it) },
                     keyboardType = KeyboardType.Password,
                     hideText = true,
                 )
@@ -193,7 +200,7 @@ fun RegisterContent(
                 DefaultButton(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.register),
-                    onClick = { },
+                    onClick = { vm.onRegisterClicked() },
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
