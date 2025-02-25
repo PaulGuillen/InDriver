@@ -6,6 +6,8 @@ _Al día de hoy el proyecto se encuentra en desarrollo._
 
 _Comenzando.._
 
+_Proyecto Backend en desarrollo [BackEnd](https://github.com/PaulGuillen/E-Commerce-BackEnd/tree/main)_
+
 ### Pre-requisitos 📋
 
 _Comenzando.._
