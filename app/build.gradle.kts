@@ -84,9 +84,15 @@ dependencies {
     //Timber
     implementation(libs.timber)
 
-    //Hilt
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.hilt.navigation.compose)
+
+    // Gson
+    implementation(libs.gson)
+
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson.converter)
 }
