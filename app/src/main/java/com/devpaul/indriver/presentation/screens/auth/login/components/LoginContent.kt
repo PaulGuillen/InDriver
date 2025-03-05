@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.devpaul.indriver.R
@@ -48,6 +49,7 @@ import com.devpaul.indriver.presentation.components.DefaultButton
 import com.devpaul.indriver.presentation.components.DefaultTextField
 import com.devpaul.indriver.presentation.navigation.screen.auth.AuthScreen
 import com.devpaul.indriver.presentation.screens.auth.login.LoginViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun LoginContent(
@@ -177,7 +179,9 @@ fun LoginContent(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.login),
                     onClick = {
-                        vm.onLoginClicked()
+                        vm.viewModelScope.launch {
+                            vm.onLoginClicked()
+                        }
                     },
                 )
                 Spacer(modifier = Modifier.height(16.dp))

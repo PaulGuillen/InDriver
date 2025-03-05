@@ -1,6 +1,7 @@
 package com.devpaul.indriver.data.repository
 
 import com.devpaul.indriver.data.datasource.remote.service.AuthService
+import com.devpaul.indriver.domain.model.req.LoginRequest
 import com.devpaul.indriver.domain.model.res.UserResponse
 import com.devpaul.indriver.domain.repository.AuthRepository
 import com.devpaul.indriver.domain.util.Resource
@@ -10,10 +11,10 @@ class AuthRepositoryImpl(
     private val authService: AuthService,
 ) : AuthRepository {
 
-    override suspend fun login(email: String, password: String):
+    override suspend fun login(loginRequest : LoginRequest):
             Resource<UserResponse> {
         return try {
-            val result = authService.login(email, password)
+            val result = authService.login(loginRequest)
             if (result.isSuccessful){
                 result.body()?.let {
                     Resource.Success(it)

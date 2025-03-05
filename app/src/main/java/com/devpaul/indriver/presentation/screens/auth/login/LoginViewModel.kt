@@ -4,12 +4,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.devpaul.indriver.domain.model.req.LoginRequest
+import com.devpaul.indriver.domain.usecase.AuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val authUseCase: AuthUseCase,
+) : ViewModel() {
 
     var state by mutableStateOf(LoginState())
         private set
@@ -24,8 +30,16 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         state = state.copy(password = password)
     }
 
-    fun onLoginClicked() {
+    fun onLoginClicked() = viewModelScope.launch {
         if (isValidForm()) {
+
+            val request = LoginRequest(
+                email = state.email,
+                password = state.password
+            )
+
+            val result = authUseCase.login(request)
+
             Timber.d("Email: ${state.email}, Password: ${state.password}")
         }
     }
