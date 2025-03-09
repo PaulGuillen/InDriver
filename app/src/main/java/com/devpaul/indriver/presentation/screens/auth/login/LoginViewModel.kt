@@ -6,7 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devpaul.indriver.domain.model.req.LoginRequest
+import com.devpaul.indriver.domain.model.res.UserResponse
 import com.devpaul.indriver.domain.usecase.AuthUseCase
+import com.devpaul.indriver.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -21,6 +23,9 @@ class LoginViewModel @Inject constructor(
         private set
 
     var errorMessage by mutableStateOf<String?>(null)
+
+    var loginResponse by mutableStateOf<Resource<UserResponse>?>(null)
+        private set
 
     fun onEmailChanged(email: String) {
         state = state.copy(email = email)
@@ -37,8 +42,9 @@ class LoginViewModel @Inject constructor(
                 email = state.email,
                 password = state.password
             )
-
+            loginResponse = Resource.Loading
             val result = authUseCase.login(request)
+            loginResponse = result
 
             Timber.d("Email: ${state.email}, Password: ${state.password}")
         }
