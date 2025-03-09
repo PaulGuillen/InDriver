@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.devpaul.indriver.R
@@ -52,6 +53,7 @@ import com.devpaul.indriver.presentation.components.DefaultButton
 import com.devpaul.indriver.presentation.components.DefaultTextField
 import com.devpaul.indriver.presentation.navigation.screen.auth.AuthScreen
 import com.devpaul.indriver.presentation.screens.auth.register.RegisterViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegisterContent(
@@ -200,7 +202,11 @@ fun RegisterContent(
                 DefaultButton(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(R.string.register),
-                    onClick = { vm.onRegisterClicked() },
+                    onClick = {
+                        vm.viewModelScope.launch {
+                            vm.onRegisterClicked()
+                        }
+                    },
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(

@@ -3,7 +3,7 @@ package com.devpaul.indriver.domain.model.res
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class UserResponse(
+data class LoginResponse(
     @SerializedName("user")
     val user: User?= null,
     @SerializedName("token")

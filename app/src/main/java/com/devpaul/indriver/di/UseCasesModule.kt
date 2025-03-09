@@ -3,6 +3,7 @@ package com.devpaul.indriver.di
 import com.devpaul.indriver.domain.repository.AuthRepository
 import com.devpaul.indriver.domain.usecase.AuthUseCase
 import com.devpaul.indriver.domain.usecase.LoginUC
+import com.devpaul.indriver.domain.usecase.RegisterUC
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +15,7 @@ object UseCasesModule {
 
     @Provides
     fun provideAuthCase(authRepository: AuthRepository) = AuthUseCase(
-        login = LoginUC(repository = authRepository)
+        login = LoginUC(repository = authRepository),
+        register = RegisterUC(repository = authRepository)
     )
 }

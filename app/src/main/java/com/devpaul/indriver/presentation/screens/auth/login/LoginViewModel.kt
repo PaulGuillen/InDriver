@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devpaul.indriver.domain.model.req.LoginRequest
-import com.devpaul.indriver.domain.model.res.UserResponse
+import com.devpaul.indriver.domain.model.res.LoginResponse
 import com.devpaul.indriver.domain.usecase.AuthUseCase
 import com.devpaul.indriver.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,7 @@ class LoginViewModel @Inject constructor(
 
     var errorMessage by mutableStateOf<String?>(null)
 
-    var loginResponse by mutableStateOf<Resource<UserResponse>?>(null)
+    var loginResponse by mutableStateOf<Resource<LoginResponse>?>(null)
         private set
 
     fun onEmailChanged(email: String) {

@@ -4,17 +4,28 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.devpaul.indriver.domain.model.req.RegisterRequest
+import com.devpaul.indriver.domain.model.res.RegisterResponse
+import com.devpaul.indriver.domain.usecase.AuthUseCase
+import com.devpaul.indriver.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class RegisterViewModel @Inject constructor() : ViewModel() {
+class RegisterViewModel @Inject constructor(
+    private val authUseCase: AuthUseCase,
+) : ViewModel() {
 
     var state by mutableStateOf(RegisterState())
         private set
 
     var errorMessage by mutableStateOf<String?>(null)
+
+    var registerResponse by mutableStateOf<Resource<RegisterResponse>?>(null)
+        private set
 
     fun onNameChanged(name: String) {
         state = state.copy(name = name)
@@ -40,9 +51,19 @@ class RegisterViewModel @Inject constructor() : ViewModel() {
         state = state.copy(confirmPassword = confirmPassword)
     }
 
-    fun onRegisterClicked() {
+    fun onRegisterClicked() = viewModelScope.launch {
         if (isValidForm()) {
-            Timber.d("Name: ${state.name}, Last Name: ${state.lastName}, Phone: ${state.phone}, Email: ${state.email}, Password: ${state.password}")
+
+            val request = RegisterRequest(
+                name = state.name,
+                lastname = state.lastName,
+                phone = state.phone,
+                email = state.email,
+                password = state.password
+            )
+            registerResponse = Resource.Loading
+            val result = authUseCase.register(request)
+            registerResponse = result
         }
     }
 
