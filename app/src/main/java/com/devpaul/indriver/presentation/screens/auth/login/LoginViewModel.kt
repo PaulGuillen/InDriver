@@ -58,8 +58,11 @@ class LoginViewModel @Inject constructor(
         authUseCase.saveSession(loginResponse)
     }
 
-    fun getSession() = viewModelScope.launch {
+    private fun getSession() = viewModelScope.launch {
         authUseCase.getSession().collect() { data ->
+            if(!data.token.isNullOrBlank()) {
+                loginResponse = Resource.Success(data)
+            }
             Timber.d("Data: $data")
         }
     }

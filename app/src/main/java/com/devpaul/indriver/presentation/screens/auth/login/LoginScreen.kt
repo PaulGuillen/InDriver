@@ -15,5 +15,5 @@ fun LoginScreen(navHostController: NavHostController) {
     ) { paddingValues ->
       LoginContent(navHostController = navHostController, paddingValues = paddingValues)
     }
-    Login()
+    Login(navHostController)
 }

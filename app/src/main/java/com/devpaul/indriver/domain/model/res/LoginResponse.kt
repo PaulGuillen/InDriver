@@ -21,7 +21,6 @@ data class LoginResponse(
             }
         }
     }
-
 }
 
 data class User(

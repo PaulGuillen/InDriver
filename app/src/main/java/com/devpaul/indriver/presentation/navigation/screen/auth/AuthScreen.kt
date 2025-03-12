@@ -1,7 +1,7 @@
 package com.devpaul.indriver.presentation.navigation.screen.auth
 
 sealed class AuthScreen(val routes: String) {
-    object Login : AuthScreen("/login")
-    object Register : AuthScreen("/register")
-    object ForgotPassword : AuthScreen("/forgot_password")
+    data object Login : AuthScreen("/login")
+    data object Register : AuthScreen("/register")
+    data object ForgotPassword : AuthScreen("/forgot_password")
 }

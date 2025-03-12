@@ -1,11 +1,12 @@
 package com.devpaul.indriver.domain.model.res
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class RegisterResponse(
     @SerializedName("user") val user: RegisterUser,
     @SerializedName("token") val token: String
-)
+) : Serializable
 
 data class RegisterUser(
     @SerializedName("id") val id: Int,

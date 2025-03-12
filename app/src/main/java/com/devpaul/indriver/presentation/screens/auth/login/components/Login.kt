@@ -5,15 +5,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.devpaul.indriver.domain.util.Resource
+import com.devpaul.indriver.presentation.navigation.Graph
 import com.devpaul.indriver.presentation.screens.auth.login.LoginViewModel
 
 @Composable
-fun Login(vm : LoginViewModel = hiltViewModel()) {
+fun Login(navHostController: NavHostController, vm: LoginViewModel = hiltViewModel()) {
     val context = LocalContext.current
 
     when (val response = vm.loginResponse) {
@@ -21,14 +24,22 @@ fun Login(vm : LoginViewModel = hiltViewModel()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
-            ){
+            ) {
                 CircularProgressIndicator()
             }
         }
+
         is Resource.Success -> {
-            vm.saveSession(response.data)
-           Toast.makeText(context, "Login correcto", Toast.LENGTH_SHORT).show()
+            LaunchedEffect(Unit) {
+                vm.saveSession(response.data)
+                navHostController.navigate(route = Graph.CLIENT) {
+                    popUpTo(Graph.AUTH) {
+                        inclusive = true
+                    }
+                }
+            }
         }
+
         is Resource.Error -> {
             Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
         }
