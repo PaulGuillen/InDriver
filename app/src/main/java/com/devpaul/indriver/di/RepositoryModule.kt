@@ -1,6 +1,7 @@
 package com.devpaul.indriver.di
 
-import com.devpaul.indriver.data.datasource.remote.service.AuthService
+import com.devpaul.indriver.data.local.datastore.LocalDataStore
+import com.devpaul.indriver.data.remote.datasource.remote.service.AuthService
 import com.devpaul.indriver.data.repository.AuthRepositoryImpl
 import com.devpaul.indriver.domain.repository.AuthRepository
 import dagger.Module
@@ -13,5 +14,5 @@ import dagger.hilt.components.SingletonComponent
 object RepositoryModule {
 
     @Provides
-    fun provideAuthRepository(authService: AuthService): AuthRepository = AuthRepositoryImpl(authService)
+    fun provideAuthRepository(authService: AuthService, localDataStore: LocalDataStore): AuthRepository = AuthRepositoryImpl(authService = authService, localDataStore = localDataStore)
 }

@@ -1,7 +1,7 @@
 package com.devpaul.indriver.di
 
 import com.devpaul.indriver.core.Config
-import com.devpaul.indriver.data.datasource.remote.service.AuthService
+import com.devpaul.indriver.data.remote.datasource.remote.service.AuthService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,7 +31,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAuthService(retrofit: Retrofit): AuthService{
+    fun provideAuthService(retrofit: Retrofit): AuthService {
         return retrofit.create(AuthService::class.java)
     }
 }

@@ -26,6 +26,7 @@ fun Login(vm : LoginViewModel = hiltViewModel()) {
             }
         }
         is Resource.Success -> {
+            vm.saveSession(response.data)
            Toast.makeText(context, "Login correcto", Toast.LENGTH_SHORT).show()
         }
         is Resource.Error -> {

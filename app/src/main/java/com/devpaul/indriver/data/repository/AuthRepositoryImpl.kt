@@ -1,6 +1,7 @@
 package com.devpaul.indriver.data.repository
 
-import com.devpaul.indriver.data.datasource.remote.service.AuthService
+import com.devpaul.indriver.data.local.datastore.LocalDataStore
+import com.devpaul.indriver.data.remote.datasource.remote.service.AuthService
 import com.devpaul.indriver.domain.model.req.LoginRequest
 import com.devpaul.indriver.domain.model.req.RegisterRequest
 import com.devpaul.indriver.domain.model.res.RegisterResponse
@@ -8,10 +9,12 @@ import com.devpaul.indriver.domain.model.res.LoginResponse
 import com.devpaul.indriver.domain.repository.AuthRepository
 import com.devpaul.indriver.domain.util.ErrorHelper
 import com.devpaul.indriver.domain.util.Resource
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
 class AuthRepositoryImpl(
     private val authService: AuthService,
+    private val localDataStore: LocalDataStore,
 ) : AuthRepository {
 
     override suspend fun login(loginRequest : LoginRequest):
@@ -53,4 +56,11 @@ class AuthRepositoryImpl(
             Resource.Error(500, "Error: ${e.message}")
         }
     }
+
+    override suspend fun saveSession(loginResponse: LoginResponse) = localDataStore.save(loginResponse)
+
+    override suspend fun logOut() = localDataStore.delete()
+
+    override fun getSession(): Flow<LoginResponse> = localDataStore.getData()
+
 }

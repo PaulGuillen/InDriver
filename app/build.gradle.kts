@@ -98,4 +98,8 @@ dependencies {
 
     //Moshi
     implementation(libs.moshi.kotlin)
+
+    //DataStore
+    implementation(libs.datastore.preferences)
+    implementation(libs.datastore.core)
 }

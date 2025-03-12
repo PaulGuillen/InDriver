@@ -27,6 +27,10 @@ class LoginViewModel @Inject constructor(
     var loginResponse by mutableStateOf<Resource<LoginResponse>?>(null)
         private set
 
+    init {
+        getSession()
+    }
+
     fun onEmailChanged(email: String) {
         state = state.copy(email = email)
     }
@@ -47,6 +51,16 @@ class LoginViewModel @Inject constructor(
             loginResponse = result
 
             Timber.d("Email: ${state.email}, Password: ${state.password}")
+        }
+    }
+
+    fun saveSession(loginResponse: LoginResponse) = viewModelScope.launch {
+        authUseCase.saveSession(loginResponse)
+    }
+
+    fun getSession() = viewModelScope.launch {
+        authUseCase.getSession().collect() { data ->
+            Timber.d("Data: $data")
         }
     }
 

@@ -1,5 +1,6 @@
 package com.devpaul.indriver.domain.model.res
 
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -8,7 +9,20 @@ data class LoginResponse(
     val user: User?= null,
     @SerializedName("token")
     val token: String ?= null,
-) : Serializable
+) : Serializable {
+    fun toJson() : String = Gson().toJson(this)
+
+    companion object {
+        fun fromJson(data: String?): LoginResponse? {
+            return if (data.isNullOrEmpty()) {
+                null
+            } else {
+                Gson().fromJson(data, LoginResponse::class.java)
+            }
+        }
+    }
+
+}
 
 data class User(
     @SerializedName("id")
