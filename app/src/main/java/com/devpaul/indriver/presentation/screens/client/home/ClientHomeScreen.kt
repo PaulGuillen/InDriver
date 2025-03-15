@@ -1,5 +1,6 @@
 package com.devpaul.indriver.presentation.screens.client.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,13 +31,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.devpaul.indriver.presentation.navigation.graph.client.ClientNavGraph
 import com.devpaul.indriver.presentation.navigation.screen.client.ClientScreen
 import com.devpaul.indriver.presentation.util.NavigationItem
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClientHomeScreen(navHostController: NavHostController) {
+fun ClientHomeScreen(navHostController: NavHostController = rememberNavController()) {
 
     val items = listOf(
         NavigationItem(
@@ -106,10 +109,9 @@ fun ClientHomeScreen(navHostController: NavHostController) {
                 )
             }
         ) { paddingValues ->
-            Text(
-                modifier = Modifier.padding(paddingValues),
-                text = "Client Home Screen"
-            )
+            Box(modifier = Modifier.padding(paddingValues)) {
+                ClientNavGraph(navHostController = navHostController)
+            }
         }
     }
 
