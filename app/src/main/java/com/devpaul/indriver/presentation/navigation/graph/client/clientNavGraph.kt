@@ -7,6 +7,8 @@ import androidx.navigation.navigation
 import com.devpaul.indriver.presentation.navigation.Graph
 import com.devpaul.indriver.presentation.navigation.screen.client.ClientScreen
 import com.devpaul.indriver.presentation.screens.client.home.ClientHomeScreen
+import com.devpaul.indriver.presentation.screens.client.mapSearcher.MapSearcherScreen
+import com.devpaul.indriver.presentation.screens.profile.info.ProfileInfoScreen
 
 fun NavGraphBuilder.clientNavGraph(navHostController: NavHostController) {
     navigation(
@@ -15,6 +17,12 @@ fun NavGraphBuilder.clientNavGraph(navHostController: NavHostController) {
     ) {
         composable(ClientScreen.ClientHome.route) {
             ClientHomeScreen(navHostController = navHostController)
+        }
+        composable(ClientScreen.ProfileInfo.route) {
+            ProfileInfoScreen(navHostController = navHostController)
+        }
+        composable(ClientScreen.MapSearcher.route) {
+            MapSearcherScreen(navHostController = navHostController)
         }
 
     }
