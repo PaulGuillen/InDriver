@@ -25,18 +25,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImage
 import com.devpaul.indriver.R
 import com.devpaul.indriver.presentation.components.DefaultIconButton
+import com.devpaul.indriver.presentation.screens.profile.info.ProfileViewModel
 
 @Composable
-fun ProfileInfoContent(navHostController: NavHostController, paddingValues: PaddingValues) {
+fun ProfileInfoContent(
+    navHostController: NavHostController,
+    paddingValues: PaddingValues,
+    vm: ProfileViewModel = hiltViewModel(),
+) {
     Box(
         modifier = Modifier
             .padding(paddingValues)
@@ -96,23 +104,31 @@ fun ProfileInfoContent(navHostController: NavHostController, paddingValues: Padd
                         .size(118.dp)
                         .clip(CircleShape)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.user_image),
-                        contentDescription = "Person",
-                    )
+                    if (!vm.user?.image.isNullOrBlank()) {
+                        AsyncImage(
+                            model = vm.user?.image,
+                            contentDescription = "Image",
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = R.drawable.user_image),
+                            contentDescription = "Person",
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "Nombre de Usuario",
+                    text = "${vm.user?.name} ${vm.user?.lastname}",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                 )
                 Text(
-                    text = "Correo de Usuario",
+                    text = vm.user?.email ?: "",
                     fontSize = 18.sp,
                 )
                 Text(
-                    text = "Teléfono de Usuario",
+                    text = vm.user?.phone ?: "",
                     fontSize = 18.sp,
                 )
             }
