@@ -1,5 +1,8 @@
 package com.devpaul.indriver.presentation.screens.profile.info.components
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,16 +39,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.devpaul.indriver.MainActivity
 import com.devpaul.indriver.R
 import com.devpaul.indriver.presentation.components.DefaultIconButton
 import com.devpaul.indriver.presentation.screens.profile.info.ProfileViewModel
 
+@SuppressLint("ContextCastToActivity")
 @Composable
 fun ProfileInfoContent(
     navHostController: NavHostController,
     paddingValues: PaddingValues,
     vm: ProfileViewModel = hiltViewModel(),
 ) {
+
+    val activity = LocalContext.current as? Activity
+
     Box(
         modifier = Modifier
             .padding(paddingValues)
@@ -73,13 +82,20 @@ fun ProfileInfoContent(
             DefaultIconButton(
                 modifier = Modifier.fillMaxWidth(),
                 title = "Editar Perfil",
-                icon = Icons.Default.Edit
+                icon = Icons.Default.Edit,
+                onClick = {
+                }
             )
             Spacer(modifier = Modifier.height(20.dp))
             DefaultIconButton(
                 modifier = Modifier.fillMaxWidth(),
                 title = "Cerrar Sesión",
-                icon = Icons.AutoMirrored.Filled.ExitToApp
+                icon = Icons.AutoMirrored.Filled.ExitToApp,
+                onClick = {
+                    vm.logOut()
+                    activity?.finish()
+                    activity?.startActivity(Intent(activity, MainActivity::class.java))
+                }
             )
         }
         Card(

@@ -1,6 +1,7 @@
 package com.devpaul.indriver.presentation.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,10 +27,12 @@ fun DefaultIconButton(
     modifier: Modifier,
     title: String,
     icon: ImageVector,
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable { onClick() }
             .padding(start = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

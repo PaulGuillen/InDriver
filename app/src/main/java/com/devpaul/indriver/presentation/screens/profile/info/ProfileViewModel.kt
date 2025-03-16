@@ -28,4 +28,8 @@ class ProfileViewModel @Inject constructor(
             user = data.user
         }
     }
+
+    fun logOut() = viewModelScope.launch {
+        authUseCases.logOutUC()
+    }
 }
