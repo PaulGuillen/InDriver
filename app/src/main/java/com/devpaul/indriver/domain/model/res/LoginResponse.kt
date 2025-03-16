@@ -6,11 +6,11 @@ import java.io.Serializable
 
 data class LoginResponse(
     @SerializedName("user")
-    val user: User?= null,
+    val user: User? = null,
     @SerializedName("token")
-    val token: String ?= null,
+    val token: String? = null,
 ) : Serializable {
-    fun toJson() : String = Gson().toJson(this)
+    fun toJson(): String = Gson().toJson(this)
 
     companion object {
         fun fromJson(data: String?): LoginResponse? {
@@ -25,7 +25,7 @@ data class LoginResponse(
 
 data class User(
     @SerializedName("id")
-    val id: Int,
+    val id: Int? = null,
     @SerializedName("name")
     val name: String,
     @SerializedName("lastname")
@@ -33,18 +33,27 @@ data class User(
     @SerializedName("email")
     val email: String,
     @SerializedName("notification_token")
-    val notificationToken: String?,
+    val notificationToken: String? = null,
     @SerializedName("phone")
     val phone: String,
     @SerializedName("image")
-    val image: String?,
+    val image: String? = null,
     @SerializedName("created_at")
-    val createdAt: String,
+    val createdAt: String? = null,
     @SerializedName("updated_at")
-    val updatedAt: String,
+    val updatedAt: String? = null,
     @SerializedName("roles")
-    val roles: List<Role>
-) : Serializable
+    val roles: List<Role>? = null
+) : Serializable {
+    fun toJson(): String = Gson().toJson(
+        User(
+            name = name,
+            lastname = lastname,
+            email = email,
+            phone = phone
+        )
+    )
+}
 
 data class Role(
     @SerializedName("id")

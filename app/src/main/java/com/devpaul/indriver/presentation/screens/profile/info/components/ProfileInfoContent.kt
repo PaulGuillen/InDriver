@@ -42,6 +42,7 @@ import coil.compose.AsyncImage
 import com.devpaul.indriver.MainActivity
 import com.devpaul.indriver.R
 import com.devpaul.indriver.presentation.components.DefaultIconButton
+import com.devpaul.indriver.presentation.navigation.screen.profile.ProfileScreen
 import com.devpaul.indriver.presentation.screens.profile.info.ProfileViewModel
 
 @SuppressLint("ContextCastToActivity")
@@ -84,6 +85,11 @@ fun ProfileInfoContent(
                 title = "Editar Perfil",
                 icon = Icons.Default.Edit,
                 onClick = {
+                    vm.user?.toJson()?.let { ProfileScreen.ProfileUpdate.passUser(it) }?.let {
+                        navHostController.navigate(
+                            route = it
+                        )
+                    }
                 }
             )
             Spacer(modifier = Modifier.height(20.dp))
