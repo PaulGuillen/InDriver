@@ -1,6 +1,5 @@
 package com.devpaul.indriver.presentation.components
 
-import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -9,6 +8,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -35,7 +37,7 @@ fun DefaultTextField(
     Box(
         modifier = modifier
             .height(56.dp)
-            .background(color = Color.White, shape = RoundedCornerShape(topStart = 14.dp, bottomEnd = 14.dp))
+            .background(color = Color(0xFFECEBEB), shape = RoundedCornerShape(topStart = 14.dp, bottomEnd = 14.dp))
     ) {
         TextField(
             value = value,
@@ -59,4 +61,17 @@ fun DefaultTextField(
             )
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DefaultTextFieldPreview() {
+    DefaultTextField(
+        modifier = Modifier,
+        value = "",
+        label = "Email",
+        icon = Icons.Default.Person,
+        onValueChange = {},
+        keyboardType = KeyboardType.Email
+    )
 }

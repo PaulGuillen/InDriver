@@ -53,6 +53,16 @@ data class User(
             phone = phone
         )
     )
+
+    companion object {
+        fun fromJson(data: String?): User? {
+            return if (data.isNullOrEmpty()) {
+                null
+            } else {
+                Gson().fromJson(data, User::class.java)
+            }
+        }
+    }
 }
 
 data class Role(
