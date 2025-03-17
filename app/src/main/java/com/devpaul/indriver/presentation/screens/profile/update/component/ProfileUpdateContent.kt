@@ -3,6 +3,7 @@ package com.devpaul.indriver.presentation.screens.profile.update.component
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +52,7 @@ fun ProfileUpdateContent(
 ) {
 
     val state = vm.state
+    vm.resultingActivityHandler.Handle()
 
     Box(
         modifier = Modifier
@@ -103,23 +105,31 @@ fun ProfileUpdateContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top,
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(118.dp)
-                        .clip(CircleShape)
-                ) {
-                    if (!vm.user?.image.isNullOrBlank()) {
-                        AsyncImage(
-                            model = vm.user?.image,
-                            contentDescription = "Image",
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.user_image),
-                            contentDescription = "Person",
-                        )
-                    }
+                if (!state.image.isNullOrBlank()) {
+                    AsyncImage(
+                        modifier = Modifier
+                            .size(130.dp)
+                            .clip(CircleShape)
+                            .align(Alignment.CenterHorizontally)
+                            .clickable {
+                                vm.takePhoto()
+                            },
+                        model = state.image,
+                        contentDescription = "Image",
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        modifier = Modifier
+                            .size(130.dp)
+                            .clip(CircleShape)
+                            .align(Alignment.CenterHorizontally)
+                            .clickable {
+                                vm.takePhoto()
+                            },
+                        painter = painterResource(id = R.drawable.user_image),
+                        contentDescription = "Person",
+                    )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 DefaultTextField(
@@ -144,7 +154,7 @@ fun ProfileUpdateContent(
                 Spacer(modifier = Modifier.height(10.dp))
                 DefaultTextField(
                     modifier = Modifier,
-                    value = state.phone ,
+                    value = state.phone,
                     label = "Celular",
                     icon = Icons.Default.Phone,
                     onValueChange = {

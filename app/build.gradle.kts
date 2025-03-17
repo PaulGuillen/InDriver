@@ -105,4 +105,7 @@ dependencies {
 
     //Coil
     implementation(libs.coil.compose)
+
+    //Files
+    implementation(libs.commons.io)
 }
