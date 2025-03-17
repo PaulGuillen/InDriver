@@ -1,7 +1,10 @@
 package com.devpaul.indriver.di
 
+import com.devpaul.indriver.core.BaseUrlInterceptor
 import com.devpaul.indriver.core.Config
+import com.devpaul.indriver.data.local.datastore.LocalDataStore
 import com.devpaul.indriver.data.remote.datasource.remote.service.AuthService
+import com.devpaul.indriver.data.remote.datasource.remote.service.UserService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +20,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().build()
+    fun provideOkHttpClient(dataStore: LocalDataStore): OkHttpClient =
+        OkHttpClient.Builder().addInterceptor(
+            BaseUrlInterceptor(dataStore)
+        )
+            .build()
 
     @Provides
     @Singleton
@@ -33,5 +40,11 @@ object NetworkModule {
     @Singleton
     fun provideAuthService(retrofit: Retrofit): AuthService {
         return retrofit.create(AuthService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserService(retrofit: Retrofit): UserService {
+        return retrofit.create(UserService::class.java)
     }
 }
