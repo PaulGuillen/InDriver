@@ -100,7 +100,7 @@ fun ProfileUpdateContent(
                 title = "Actualizar Usuario",
                 icon = Icons.Default.Edit,
                 onClick = {
-                    vm.update()
+                    vm.submit()
                 }
             )
         }

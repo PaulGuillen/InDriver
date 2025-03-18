@@ -47,6 +47,24 @@ class ProfileUpdateViewModel @Inject constructor(
         )
     }
 
+    fun submit() {
+        if (file != null) {
+            updateWithImage()
+        } else {
+            update()
+        }
+    }
+
+    fun updateWithImage() = viewModelScope.launch {
+        updateResponse = Resource.Loading
+        val result = userUseCase.update(
+            id = user?.id.toString(),
+            user = state.toUser(),
+            file = file,
+        )
+        updateResponse = result
+    }
+
     fun update() = viewModelScope.launch {
         updateResponse = Resource.Loading
         val result = userUseCase.update(
