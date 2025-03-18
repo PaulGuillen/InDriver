@@ -25,6 +25,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,7 @@ import coil.compose.AsyncImage
 import com.devpaul.indriver.R
 import com.devpaul.indriver.presentation.components.DefaultIconButton
 import com.devpaul.indriver.presentation.components.DefaultTextField
+import com.devpaul.indriver.presentation.components.DialogCameraGallery
 import com.devpaul.indriver.presentation.screens.profile.update.ProfileUpdateViewModel
 
 @SuppressLint("ContextCastToActivity")
@@ -53,6 +56,19 @@ fun ProfileUpdateContent(
 
     val state = vm.state
     vm.resultingActivityHandler.Handle()
+
+    val stateDialog = remember {
+        mutableStateOf(false)
+    }
+    DialogCameraGallery(
+        state = stateDialog,
+        takePhoto = {
+            vm.takePhoto()
+        },
+        pickImage = {
+            vm.pickImage()
+        }
+    )
 
     Box(
         modifier = Modifier
@@ -112,7 +128,7 @@ fun ProfileUpdateContent(
                             .clip(CircleShape)
                             .align(Alignment.CenterHorizontally)
                             .clickable {
-                                vm.takePhoto()
+                                stateDialog.value = true
                             },
                         model = state.image,
                         contentDescription = "Image",
@@ -125,7 +141,7 @@ fun ProfileUpdateContent(
                             .clip(CircleShape)
                             .align(Alignment.CenterHorizontally)
                             .clickable {
-                                vm.takePhoto()
+                                stateDialog.value = true
                             },
                         painter = painterResource(id = R.drawable.user_image),
                         contentDescription = "Person",
