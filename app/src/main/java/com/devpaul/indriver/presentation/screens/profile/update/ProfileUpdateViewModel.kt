@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devpaul.indriver.data.mapper.toUser
 import com.devpaul.indriver.domain.model.res.User
+import com.devpaul.indriver.domain.usecase.AuthUseCase
 import com.devpaul.indriver.domain.usecase.UserUseCase
 import com.devpaul.indriver.domain.util.Resource
 import com.devpaul.indriver.presentation.util.ComposeFileProvider
@@ -21,6 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileUpdateViewModel @Inject constructor(
+    private val authUseCase: AuthUseCase,
     private val userUseCase: UserUseCase,
     savedStateHandle: SavedStateHandle,
     @ApplicationContext private val context: Context,
@@ -55,7 +57,11 @@ class ProfileUpdateViewModel @Inject constructor(
         }
     }
 
-    fun updateWithImage() = viewModelScope.launch {
+    fun updateUserSession(userResponse : User) = viewModelScope.launch {
+       authUseCase.updateSessionUC(userResponse)
+    }
+
+    private fun updateWithImage() = viewModelScope.launch {
         updateResponse = Resource.Loading
         val result = userUseCase.update(
             id = user?.id.toString(),

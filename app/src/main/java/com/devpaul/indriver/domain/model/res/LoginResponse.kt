@@ -27,17 +27,17 @@ data class User(
     @SerializedName("id")
     val id: Int? = null,
     @SerializedName("name")
-    val name: String,
+    var name: String,
     @SerializedName("lastname")
-    val lastname: String,
+    var lastname: String,
     @SerializedName("email")
     val email: String? = null,
     @SerializedName("notification_token")
     val notificationToken: String? = null,
     @SerializedName("phone")
-    val phone: String,
+    var phone: String,
     @SerializedName("image")
-    val image: String? = null,
+    var image: String? = null,
     @SerializedName("created_at")
     val createdAt: String? = null,
     @SerializedName("updated_at")

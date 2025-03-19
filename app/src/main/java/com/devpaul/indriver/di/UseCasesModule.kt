@@ -8,6 +8,7 @@ import com.devpaul.indriver.domain.usecase.LogOutUC
 import com.devpaul.indriver.domain.usecase.LoginUC
 import com.devpaul.indriver.domain.usecase.RegisterUC
 import com.devpaul.indriver.domain.usecase.SaveSessionUC
+import com.devpaul.indriver.domain.usecase.UpdateSessionUC
 import com.devpaul.indriver.domain.usecase.UserUpdateUC
 import com.devpaul.indriver.domain.usecase.UserUseCase
 import dagger.Module
@@ -26,6 +27,7 @@ object UseCasesModule {
         saveSession = SaveSessionUC(authRepository = authRepository),
         getSession = GetSessionUC(authRepository = authRepository),
         logOutUC = LogOutUC(repository = authRepository),
+        updateSessionUC = UpdateSessionUC(repository = authRepository),
     )
 
     @Provides

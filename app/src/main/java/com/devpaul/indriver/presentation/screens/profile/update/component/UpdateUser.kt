@@ -28,6 +28,7 @@ fun UpdateUser(navHostController: NavHostController, vm: ProfileUpdateViewModel 
         }
 
         is Resource.Success -> {
+            vm.updateUserSession(response.data)
            Toast.makeText(context, "Usuario actualizado", Toast.LENGTH_SHORT).show()
         }
 
