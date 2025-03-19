@@ -3,6 +3,8 @@ package com.devpaul.indriver.domain.model.res
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 data class LoginResponse(
     @SerializedName("user")
@@ -51,7 +53,12 @@ data class User(
             name = name,
             lastname = lastname,
             email = email,
-            phone = phone
+            phone = phone,
+            image = if (!image.isNullOrBlank()) {
+                URLEncoder.encode(image, StandardCharsets.UTF_8.toString())
+            } else {
+                null
+            },
         )
     )
 
