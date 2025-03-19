@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devpaul.indriver.domain.model.req.LoginRequest
 import com.devpaul.indriver.domain.model.res.LoginResponse
-import com.devpaul.indriver.domain.usecase.AuthUseCase
+import com.devpaul.indriver.domain.usecase.auth.AuthUseCases
 import com.devpaul.indriver.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase,
+    private val authUseCases: AuthUseCases,
 ) : ViewModel() {
 
     var state by mutableStateOf(LoginState())
@@ -47,7 +47,7 @@ class LoginViewModel @Inject constructor(
                 password = state.password
             )
             loginResponse = Resource.Loading
-            val result = authUseCase.login(request)
+            val result = authUseCases.login(request)
             loginResponse = result
 
             Timber.d("Email: ${state.email}, Password: ${state.password}")
@@ -55,11 +55,11 @@ class LoginViewModel @Inject constructor(
     }
 
     fun saveSession(loginResponse: LoginResponse) = viewModelScope.launch {
-        authUseCase.saveSession(loginResponse)
+        authUseCases.saveSession(loginResponse)
     }
 
     private fun getSession() = viewModelScope.launch {
-        authUseCase.getSession().collect() { data ->
+        authUseCases.getSession().collect() { data ->
             if(!data.token.isNullOrBlank()) {
                 loginResponse = Resource.Success(data)
             }

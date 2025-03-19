@@ -1,4 +1,4 @@
-package com.devpaul.indriver.data.remote.datasource.remote.service
+package com.devpaul.indriver.data.datasource.remote
 
 import com.devpaul.indriver.domain.model.res.User
 import okhttp3.MultipartBody

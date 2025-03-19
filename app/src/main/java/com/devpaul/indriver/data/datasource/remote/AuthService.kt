@@ -1,4 +1,4 @@
-package com.devpaul.indriver.data.remote.datasource.remote.service
+package com.devpaul.indriver.data.datasource.remote
 
 import com.devpaul.indriver.domain.model.req.LoginRequest
 import com.devpaul.indriver.domain.model.req.RegisterRequest

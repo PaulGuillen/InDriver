@@ -9,8 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devpaul.indriver.data.mapper.toUser
 import com.devpaul.indriver.domain.model.res.User
-import com.devpaul.indriver.domain.usecase.AuthUseCase
-import com.devpaul.indriver.domain.usecase.UserUseCase
+import com.devpaul.indriver.domain.usecase.auth.AuthUseCases
+import com.devpaul.indriver.domain.usecase.user.UserUseCases
 import com.devpaul.indriver.domain.util.Resource
 import com.devpaul.indriver.presentation.util.ComposeFileProvider
 import com.devpaul.indriver.presentation.util.ResultingActivityHandler
@@ -22,8 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileUpdateViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase,
-    private val userUseCase: UserUseCase,
+    private val authUseCases: AuthUseCases,
+    private val userUseCases: UserUseCases,
     savedStateHandle: SavedStateHandle,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
@@ -58,12 +58,12 @@ class ProfileUpdateViewModel @Inject constructor(
     }
 
     fun updateUserSession(userResponse : User) = viewModelScope.launch {
-       authUseCase.updateSessionUC(userResponse)
+       authUseCases.updateSessionUC(userResponse)
     }
 
     private fun updateWithImage() = viewModelScope.launch {
         updateResponse = Resource.Loading
-        val result = userUseCase.update(
+        val result = userUseCases.update(
             id = user?.id.toString(),
             user = state.toUser(),
             file = file,
@@ -73,7 +73,7 @@ class ProfileUpdateViewModel @Inject constructor(
 
     fun update() = viewModelScope.launch {
         updateResponse = Resource.Loading
-        val result = userUseCase.update(
+        val result = userUseCases.update(
             id = user?.id.toString(),
             user = state.toUser(),
             file = null,

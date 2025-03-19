@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.devpaul.indriver.domain.model.req.RegisterRequest
 import com.devpaul.indriver.domain.model.res.LoginResponse
 import com.devpaul.indriver.domain.model.res.RegisterResponse
-import com.devpaul.indriver.domain.usecase.AuthUseCase
+import com.devpaul.indriver.domain.usecase.auth.AuthUseCases
 import com.devpaul.indriver.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase,
+    private val authUseCases: AuthUseCases,
 ) : ViewModel() {
 
     var state by mutableStateOf(RegisterState())
@@ -62,13 +62,13 @@ class RegisterViewModel @Inject constructor(
                 password = state.password
             )
             registerResponse = Resource.Loading
-            val result = authUseCase.register(request)
+            val result = authUseCases.register(request)
             registerResponse = result
         }
     }
 
     fun saveSession(registerResponse: LoginResponse) = viewModelScope.launch {
-        authUseCase.saveSession(registerResponse)
+        authUseCases.saveSession(registerResponse)
     }
 
     private fun isValidForm(): Boolean {

@@ -1,4 +1,4 @@
-package com.devpaul.indriver.domain.usecase
+package com.devpaul.indriver.domain.usecase.user
 
 import com.devpaul.indriver.domain.model.res.LoginResponse
 import com.devpaul.indriver.domain.repository.AuthRepository

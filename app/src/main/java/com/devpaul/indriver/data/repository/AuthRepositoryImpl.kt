@@ -1,7 +1,7 @@
 package com.devpaul.indriver.data.repository
 
-import com.devpaul.indriver.data.local.datastore.LocalDataStore
-import com.devpaul.indriver.data.remote.datasource.remote.service.AuthService
+import com.devpaul.indriver.data.datasource.local.datastore.LocalDataStore
+import com.devpaul.indriver.data.datasource.remote.AuthService
 import com.devpaul.indriver.data.util.HandleRequest
 import com.devpaul.indriver.domain.model.req.LoginRequest
 import com.devpaul.indriver.domain.model.req.RegisterRequest

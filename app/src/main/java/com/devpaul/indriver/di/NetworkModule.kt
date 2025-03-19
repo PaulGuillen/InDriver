@@ -2,9 +2,9 @@ package com.devpaul.indriver.di
 
 import com.devpaul.indriver.core.BaseUrlInterceptor
 import com.devpaul.indriver.core.Config
-import com.devpaul.indriver.data.local.datastore.LocalDataStore
-import com.devpaul.indriver.data.remote.datasource.remote.service.AuthService
-import com.devpaul.indriver.data.remote.datasource.remote.service.UserService
+import com.devpaul.indriver.data.datasource.local.datastore.LocalDataStore
+import com.devpaul.indriver.data.datasource.remote.AuthService
+import com.devpaul.indriver.data.datasource.remote.UserService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

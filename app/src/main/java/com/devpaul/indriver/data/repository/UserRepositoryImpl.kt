@@ -1,6 +1,6 @@
 package com.devpaul.indriver.data.repository
 
-import com.devpaul.indriver.data.remote.datasource.remote.service.UserService
+import com.devpaul.indriver.data.datasource.remote.UserService
 import com.devpaul.indriver.data.util.HandleRequest
 import com.devpaul.indriver.domain.model.res.User
 import com.devpaul.indriver.domain.repository.UserRepository

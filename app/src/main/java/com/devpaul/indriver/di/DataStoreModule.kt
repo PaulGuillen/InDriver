@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.devpaul.indriver.core.Config.AUTH_PREF
-import com.devpaul.indriver.data.local.datastore.LocalDataStore
+import com.devpaul.indriver.data.datasource.local.datastore.LocalDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

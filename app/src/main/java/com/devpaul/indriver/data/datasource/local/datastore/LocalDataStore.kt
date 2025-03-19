@@ -1,4 +1,4 @@
-package com.devpaul.indriver.data.local.datastore
+package com.devpaul.indriver.data.datasource.local.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

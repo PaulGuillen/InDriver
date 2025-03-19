@@ -6,14 +6,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devpaul.indriver.domain.model.res.User
-import com.devpaul.indriver.domain.usecase.AuthUseCase
+import com.devpaul.indriver.domain.usecase.auth.AuthUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val authUseCases : AuthUseCase
+    private val authUseCases : AuthUseCases
 ): ViewModel() {
 
     var user by mutableStateOf<User?>(null)

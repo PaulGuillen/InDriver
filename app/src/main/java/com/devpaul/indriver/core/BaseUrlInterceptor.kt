@@ -1,6 +1,6 @@
 package com.devpaul.indriver.core
 
-import com.devpaul.indriver.data.local.datastore.LocalDataStore
+import com.devpaul.indriver.data.datasource.local.datastore.LocalDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
