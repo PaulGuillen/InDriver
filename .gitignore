@@ -240,3 +240,5 @@ fabric.properties
 ##ignore keys
 #sign/*.jks
 #sign/*.properties
+
+gradle.properties
