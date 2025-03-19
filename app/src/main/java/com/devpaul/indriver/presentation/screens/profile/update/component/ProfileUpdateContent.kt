@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
@@ -147,36 +149,51 @@ fun ProfileUpdateContent(
                         contentDescription = "Person",
                     )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
-                DefaultTextField(
-                    modifier = Modifier,
-                    value = state.name,
-                    label = "Nombre",
-                    icon = Icons.Default.Person,
-                    onValueChange = {
-                        vm.onNameChange(it)
-                    },
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                DefaultTextField(
-                    modifier = Modifier,
-                    value = state.lastname,
-                    label = "Apellido",
-                    icon = Icons.Outlined.Person,
-                    onValueChange = {
-                        vm.onLastnameChange(it)
-                    },
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                DefaultTextField(
-                    modifier = Modifier,
-                    value = state.phone,
-                    label = "Celular",
-                    icon = Icons.Default.Phone,
-                    onValueChange = {
-                        vm.onPhoneChange(it)
-                    },
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp)
+                ) {
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    DefaultTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = state.name,
+                        label = "Nombre",
+                        icon = Icons.Default.Person,
+                        onValueChange = {
+                            vm.onNameChange(it)
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    DefaultTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = state.lastname,
+                        label = "Apellido",
+                        icon = Icons.Outlined.Person,
+                        onValueChange = {
+                            vm.onLastnameChange(it)
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    DefaultTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = state.phone,
+                        label = "Celular",
+                        icon = Icons.Default.Phone,
+                        onValueChange = {
+                            vm.onPhoneChange(it)
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+
             }
         }
     }

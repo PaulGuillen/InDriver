@@ -121,23 +121,25 @@ fun ProfileInfoContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top,
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(118.dp)
-                        .clip(CircleShape)
-                ) {
-                    if (!vm.user?.image.isNullOrBlank()) {
-                        AsyncImage(
-                            model = vm.user?.image,
-                            contentDescription = "Image",
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.user_image),
-                            contentDescription = "Person",
-                        )
-                    }
+                if (!vm.user?.image.isNullOrBlank()) {
+                    AsyncImage(
+                        modifier = Modifier
+                            .size(130.dp)
+                            .clip(CircleShape)
+                            .align(Alignment.CenterHorizontally),
+                        model = vm.user?.image,
+                        contentDescription = "Image",
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        modifier = Modifier
+                            .size(130.dp)
+                            .clip(CircleShape)
+                            .align(Alignment.CenterHorizontally),
+                        painter = painterResource(id = R.drawable.user_image),
+                        contentDescription = "Person",
+                    )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
