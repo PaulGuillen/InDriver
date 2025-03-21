@@ -63,6 +63,7 @@ fun ClientHomeScreen(navHostController: NavHostController = rememberNavControlle
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = false,
         drawerContent = {
             ModalDrawerSheet(
                 modifier = Modifier.width(260.dp)

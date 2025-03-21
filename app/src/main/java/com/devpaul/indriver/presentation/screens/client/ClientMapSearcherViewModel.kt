@@ -1,11 +1,12 @@
 package com.devpaul.indriver.presentation.screens.client
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devpaul.indriver.domain.usecase.location.LocationUseCases
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,11 +15,12 @@ class ClientMapSearcherViewModel @Inject constructor(
     private val locationUseCases: LocationUseCases,
 ) : ViewModel() {
 
-    val location = mutableStateOf<LatLng?>(null)
+    private val _location = MutableStateFlow<LatLng?>(null)
+    val location: StateFlow<LatLng?> = _location
 
     fun startLocationUpdates() = viewModelScope.launch {
         locationUseCases.getLocationUpdateUC { position ->
-            location.value = position
+            _location.value = position
         }
     }
 }
