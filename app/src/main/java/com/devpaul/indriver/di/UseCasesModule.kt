@@ -9,6 +9,8 @@ import com.devpaul.indriver.domain.usecase.auth.LogOutUC
 import com.devpaul.indriver.domain.usecase.auth.LoginUC
 import com.devpaul.indriver.domain.usecase.auth.RegisterUC
 import com.devpaul.indriver.domain.usecase.location.GetLocationUpdateUC
+import com.devpaul.indriver.domain.usecase.location.GetPlaceDetailsUC
+import com.devpaul.indriver.domain.usecase.location.GetPlacePredictionsUC
 import com.devpaul.indriver.domain.usecase.location.LocationUseCases
 import com.devpaul.indriver.domain.usecase.user.SaveSessionUC
 import com.devpaul.indriver.domain.usecase.user.UpdateSessionUC
@@ -41,5 +43,7 @@ object UseCasesModule {
     @Provides
     fun provideLocationCase(locationRepository: LocationRepository) = LocationUseCases(
         getLocationUpdateUC = GetLocationUpdateUC(locationRepository = locationRepository),
+        getPlaceDetailsUC = GetPlaceDetailsUC(locationRepository = locationRepository),
+        getPlacePredictionsUC = GetPlacePredictionsUC(locationRepository = locationRepository)
     )
 }

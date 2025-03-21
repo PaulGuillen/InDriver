@@ -242,3 +242,4 @@ fabric.properties
 #sign/*.properties
 
 gradle.properties
+app/src/main/res/values/strings.xml

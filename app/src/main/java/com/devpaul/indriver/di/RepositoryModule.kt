@@ -10,6 +10,7 @@ import com.devpaul.indriver.data.repository.UserRepositoryImpl
 import com.devpaul.indriver.domain.repository.AuthRepository
 import com.devpaul.indriver.domain.repository.LocationRepository
 import com.devpaul.indriver.domain.repository.UserRepository
+import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,6 +32,9 @@ object RepositoryModule {
         UserRepositoryImpl(userService = userService)
 
     @Provides
-    fun provideLocationRepository(locationDataSource: LocationDataSource): LocationRepository =
-        LocationRepositoryImpl(locationDataSource = locationDataSource)
+    fun provideLocationRepository(
+        locationDataSource: LocationDataSource,
+        placesClient: PlacesClient,
+    ): LocationRepository =
+        LocationRepositoryImpl(locationDataSource = locationDataSource, placesClient = placesClient)
 }
