@@ -11,11 +11,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.devpaul.indriver.R
 import com.devpaul.indriver.presentation.screens.client.ClientMapSearcherViewModel
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
@@ -30,10 +33,20 @@ fun ClientMapSearcherContent(
     vm: ClientMapSearcherViewModel = hiltViewModel(),
 ) {
 
+    val context = LocalContext.current
     val location by vm.location.collectAsState()
     val cameraPositionState = rememberCameraPositionState()
     var isCameraCentered by remember {
         mutableStateOf(false)
+    }
+
+    val mapProperties by remember {
+        mutableStateOf(
+            MapProperties(
+                mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style),
+                isMyLocationEnabled = true,
+            )
+        )
     }
 
     LaunchedEffect(key1 = location) {
@@ -50,7 +63,7 @@ fun ClientMapSearcherContent(
             .fillMaxSize()
             .padding(0.dp),
         cameraPositionState = cameraPositionState,
-        properties = MapProperties(isMyLocationEnabled = true)
+        properties = mapProperties
     ) {
         location?.let { position ->
             Timber.d("PositionScreen: $position")
