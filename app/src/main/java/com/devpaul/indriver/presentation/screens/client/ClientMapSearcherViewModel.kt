@@ -1,5 +1,8 @@
 package com.devpaul.indriver.presentation.screens.client
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devpaul.indriver.domain.model.res.PlacePrediction
@@ -25,6 +28,8 @@ class ClientMapSearcherViewModel @Inject constructor(
 
     private val _selectedPlace = MutableStateFlow<Place?>(null)
     val selectedPlace: StateFlow<Place?> get() = _selectedPlace
+
+    var isInteractingWithMap by mutableStateOf(false)
 
     fun startLocationUpdates() = viewModelScope.launch {
         locationUseCases.getLocationUpdateUC { position ->
