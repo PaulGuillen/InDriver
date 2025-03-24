@@ -9,12 +9,12 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resumeWithException
 
 class LocationRepositoryImpl(
     private val locationDataSource: LocationDataSource,
     private val placesClient: PlacesClient,
-) :
-    LocationRepository {
+) : LocationRepository {
 
     override fun getLocationUpdates(callback: (position: LatLng) -> Unit) {
         locationDataSource.getLocationUpdates(callback)
@@ -25,16 +25,15 @@ class LocationRepositoryImpl(
         return suspendCancellableCoroutine { continuation ->
             placesClient.findAutocompletePredictions(request)
                 .addOnSuccessListener { response ->
-                    val predictions = response.autocompletePredictions.map {
+                    val predictions = response.autocompletePredictions.map { prediction ->
                         PlacePrediction(
-                            placeId = it.placeId,
-                            fullText = it.getFullText(null).toString(),
+                            placeId = prediction.placeId,
+                            fullText = prediction.getFullText(null).toString()
                         )
                     }
-                    continuation.resumeWith(Result.success(predictions))
-                }
-                .addOnFailureListener {
-                    continuation.resumeWith(Result.failure(it))
+                    continuation.resume(predictions) {}
+                }.addOnFailureListener { e ->
+                    continuation.resumeWithException(e)
                 }
         }
     }
@@ -42,16 +41,14 @@ class LocationRepositoryImpl(
     override suspend fun getPlaceDetails(placeId: String): Place {
         val request = FetchPlaceRequest.builder(
             placeId,
-            listOf(Place.Field.ID, Place.Field.LAT_LNG),
+            listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS)
         ).build()
-
         return suspendCancellableCoroutine { continuation ->
             placesClient.fetchPlace(request)
                 .addOnSuccessListener { response ->
-                    continuation.resumeWith(Result.success(response.place))
-                }
-                .addOnFailureListener {
-                    continuation.resumeWith(Result.failure(it))
+                    continuation.resume(response.place) {}
+                }.addOnFailureListener { e ->
+                    continuation.resumeWithException(e)
                 }
         }
     }

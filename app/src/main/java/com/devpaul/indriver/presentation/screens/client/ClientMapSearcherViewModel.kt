@@ -42,8 +42,9 @@ class ClientMapSearcherViewModel @Inject constructor(
         _placePredictions.value = predictions
     }
 
-    fun getPlaceDetails(placeId: String) = viewModelScope.launch {
+    fun getPlaceDetails(placeId: String, onPlaceSelected: (place: Place) -> Unit) = viewModelScope.launch {
         val place = locationUseCases.getPlaceDetailsUC(placeId)
         _selectedPlace.value = place
+        onPlaceSelected(place)
     }
 }

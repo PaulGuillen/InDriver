@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +19,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
@@ -28,12 +32,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.devpaul.indriver.R
@@ -41,6 +48,7 @@ import com.devpaul.indriver.presentation.components.DefaultTextField
 import com.devpaul.indriver.presentation.screens.client.ClientMapSearcherViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MapStyleOptions
+import com.google.android.libraries.places.api.model.Place
 import com.google.maps.android.compose.CameraMoveStartedReason
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
@@ -48,6 +56,7 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.delay
 import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,11 +69,13 @@ fun ClientMapSearcherContent(
 
     val context = LocalContext.current
     var query by remember { mutableStateOf("") }
-    val placePredictions by vm.placePredictions.collectAsState()
-    val selectedPlace by vm.selectedPlace.collectAsState()
     val location by vm.location.collectAsState()
     val cameraPositionState = rememberCameraPositionState()
     var isCameraCentered by remember {
+        mutableStateOf(false)
+    }
+
+    var showSearchModal by remember {
         mutableStateOf(false)
     }
 
@@ -95,34 +106,37 @@ fun ClientMapSearcherContent(
                         .height(calculateSheetHeight(vm = vm))
                         .background(Color.White)
                 ) {
-                    DefaultTextField(
-                        modifier = Modifier,
-                        value = query,
-                        label = "Search",
-                        icon = Icons.Default.LocationOn,
-                        onValueChange = {
-                            query = it
-                            vm.getPlacePredictions(it)
-                        },
-                    )
-                    LazyColumn {
-                        items(placePredictions) { prediction ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                showSearchModal = true
+                            },
+                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp)
+                                .padding(horizontal = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = null,
+                                tint = Color.DarkGray
+                            )
                             Text(
+                                text = if (query.isEmpty()) "Search" else query,
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        vm.getPlaceDetails(prediction.placeId)
-                                    },
-                                text = prediction.fullText,
+                                    .padding(start = 8.dp)
+                                    .weight(1f),
+                                color = Color.DarkGray
                             )
                         }
                     }
 
-                    selectedPlace?.let { place ->
-                        Text(
-                            text = "Selected place: ${place.name} ${place.latLng}",
-                        )
-                    }
                 }
             }
         },
@@ -137,7 +151,7 @@ fun ClientMapSearcherContent(
                 GoogleMap(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(0.dp),
+                        .padding(paddingValues),
                     cameraPositionState = cameraPositionState,
                     properties = mapProperties
                 ) {
@@ -149,9 +163,87 @@ fun ClientMapSearcherContent(
                     }
                 }
                 CheckForMapInteraction(cameraPositionState = cameraPositionState, vm = vm)
+                if (showSearchModal) {
+                    PlaceSearchModal(
+                        onDismissRequest = {
+                            showSearchModal = false
+                        },
+                        onPlaceSelected = { place ->
+                            query = place.address
+                            showSearchModal = false
+                        },
+                        vm = vm
+                    )
+                }
             }
         }
     )
+}
+
+@Composable
+private fun PlaceSearchModal(
+    onDismissRequest: () -> Unit,
+    onPlaceSelected: (place: Place) -> Unit,
+    vm: ClientMapSearcherViewModel,
+) {
+    val placePredictions by vm.placePredictions.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
+    val searchQueryState = remember { mutableStateOf("") }
+
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(
+                    fraction = 0.9f
+                )
+                .background(Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                DefaultTextField(
+                    modifier = Modifier,
+                    value = searchQuery,
+                    label = "Search",
+                    icon = Icons.Default.LocationOn,
+                    onValueChange = {
+                        searchQuery = it
+                        searchQueryState.value = it
+                    },
+                )
+                LazyColumn {
+                    items(placePredictions) { prediction ->
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    vm.getPlaceDetails(prediction.placeId) {
+                                        onPlaceSelected(it)
+                                    }
+                                },
+                            text = prediction.fullText,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(searchQueryState.value) {
+        if (searchQueryState.value.isNotEmpty()) {
+            delay(500)
+          if (searchQueryState.value == searchQuery) {
+              vm.getPlacePredictions(searchQuery)
+          }
+        }
+    }
 }
 
 @Composable

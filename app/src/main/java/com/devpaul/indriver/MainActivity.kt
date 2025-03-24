@@ -1,6 +1,5 @@
 package com.devpaul.indriver
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,11 +17,14 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var navHostController: NavHostController
 
-    @SuppressLint("ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Timber.plant(Timber.DebugTree())
         if (!Places.isInitialized()) {
-            Places.initialize(applicationContext, getString(R.string.google_api_key))
+            Places.initialize(this, getString(R.string.google_api_key))
+            Timber.d("Places API initialized")
+        } else {
+            Timber.d("Places API already initialized")
         }
         enableEdgeToEdge()
         setContent {
@@ -31,6 +33,5 @@ class MainActivity : ComponentActivity() {
                 RootNavGraph(navHostController = navHostController)
             }
         }
-        Timber.plant(Timber.DebugTree())
     }
 }
