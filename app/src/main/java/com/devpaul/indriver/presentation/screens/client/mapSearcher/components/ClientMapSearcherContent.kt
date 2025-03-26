@@ -5,10 +5,12 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,12 +19,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
@@ -34,11 +39,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -68,17 +77,13 @@ fun ClientMapSearcherContent(
 ) {
 
     val context = LocalContext.current
-    var query by remember { mutableStateOf("") }
+    var originQuery by remember { mutableStateOf("") }
+    var destinationQuery by remember { mutableStateOf("") }
     val location by vm.location.collectAsState()
     val cameraPositionState = rememberCameraPositionState()
-    var isCameraCentered by remember {
-        mutableStateOf(false)
-    }
-
-    var showSearchModal by remember {
-        mutableStateOf(false)
-    }
-
+    var isOriginFocused by remember { mutableStateOf(false) }
+    var isCameraCentered by remember { mutableStateOf(false) }
+    var showSearchModal by remember { mutableStateOf(false) }
     val mapProperties by remember {
         mutableStateOf(
             MapProperties(
@@ -110,6 +115,7 @@ fun ClientMapSearcherContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
+                                isOriginFocused = true
                                 showSearchModal = true
                             },
                         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
@@ -128,7 +134,39 @@ fun ClientMapSearcherContent(
                                 tint = Color.DarkGray
                             )
                             Text(
-                                text = if (query.isEmpty()) "Search" else query,
+                                text = if (originQuery.isEmpty()) "Recoger en" else originQuery,
+                                modifier = Modifier
+                                    .padding(start = 8.dp)
+                                    .weight(1f),
+                                color = Color.DarkGray
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                isOriginFocused = false
+                                showSearchModal = true
+                            },
+                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp)
+                                .padding(horizontal = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = null,
+                                tint = Color.DarkGray
+                            )
+                            Text(
+                                text = if (destinationQuery.isEmpty()) "Destino" else destinationQuery,
                                 modifier = Modifier
                                     .padding(start = 8.dp)
                                     .weight(1f),
@@ -169,9 +207,14 @@ fun ClientMapSearcherContent(
                             showSearchModal = false
                         },
                         onPlaceSelected = { place ->
-                            query = place.address
+                            if (isOriginFocused) {
+                                originQuery = place.address
+                            } else {
+                                destinationQuery = place.address
+                            }
                             showSearchModal = false
                         },
+                        isOriginFocused = isOriginFocused,
                         vm = vm
                     )
                 }
@@ -184,52 +227,120 @@ fun ClientMapSearcherContent(
 private fun PlaceSearchModal(
     onDismissRequest: () -> Unit,
     onPlaceSelected: (place: Place) -> Unit,
-    vm: ClientMapSearcherViewModel,
+    isOriginFocused: Boolean,
+    vm: ClientMapSearcherViewModel
 ) {
     val placePredictions by vm.placePredictions.collectAsState()
-    var searchQuery by remember { mutableStateOf("") }
+    var originSearchQuery by remember { mutableStateOf("") }
+    var destinationSearchQuery by remember { mutableStateOf("") }
     val searchQueryState = remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(isOriginFocused) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
 
     Dialog(
         onDismissRequest = onDismissRequest,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-        )
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(
-                    fraction = 0.9f
-                )
+                .fillMaxHeight(fraction = 0.75f)
                 .background(Color.White)
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
             ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp)
+                        .background(Color.Black),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "INTRODUCE TU RUTA",
+                        modifier = Modifier.padding(start = 30.dp),
+                        color = Color.White,
+                        fontSize = 20.sp
+                    )
+                    IconButton(
+                        onClick = onDismissRequest,
+                        modifier = Modifier.padding(end = 30.dp),
+                        colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
+                    )
+                    {
+                        Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                    }
+                }
+
                 DefaultTextField(
-                    modifier = Modifier,
-                    value = searchQuery,
-                    label = "Search",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(if (isOriginFocused) focusRequester else FocusRequester())
+                        .padding(top = 20.dp, start = 20.dp, end = 20.dp),
+                    value = originSearchQuery,
+                    label = "Recoger en",
                     icon = Icons.Default.LocationOn,
                     onValueChange = {
-                        searchQuery = it
-                        searchQueryState.value = it
+                        originSearchQuery = it
+                        if (isOriginFocused) {
+                            searchQueryState.value = it
+                        }
                     },
+                    enabled = isOriginFocused,
                 )
-                LazyColumn {
+                DefaultTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+//                        .background(if (!isOriginFocused) Color.Gray else Color.Transparent)
+                        .focusRequester(if (!isOriginFocused) focusRequester else FocusRequester())
+                        .padding(top = 20.dp, start = 20.dp, end = 20.dp),
+                    value = destinationSearchQuery,
+                    label = "Destino",
+                    icon = Icons.Default.LocationOn,
+                    onValueChange = {
+                        destinationSearchQuery = it
+                        if (!isOriginFocused) {
+                            searchQueryState.value = it
+                        }
+                    },
+                    enabled = !isOriginFocused,
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 30.dp, end = 30.dp)
+                ) {
                     items(placePredictions) { prediction ->
-                        Text(
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {
-                                    vm.getPlaceDetails(prediction.placeId) {
-                                        onPlaceSelected(it)
+                                .height(50.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = prediction.fullText,
+                                fontSize = 17.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        vm.getPlaceDetails(
+                                            prediction.placeId,
+                                            isOriginFocused
+                                        ) { place ->
+                                            onPlaceSelected(place)
+                                            onDismissRequest()
+                                        }
                                     }
-                                },
-                            text = prediction.fullText,
-                        )
+                            )
+                        }
                     }
                 }
             }
@@ -237,11 +348,12 @@ private fun PlaceSearchModal(
     }
 
     LaunchedEffect(searchQueryState.value) {
+        Timber.d("SearchQuery: ${searchQueryState.value}")
         if (searchQueryState.value.isNotEmpty()) {
             delay(500)
-          if (searchQueryState.value == searchQuery) {
-              vm.getPlacePredictions(searchQuery)
-          }
+            if (searchQueryState.value == if (isOriginFocused) originSearchQuery else destinationSearchQuery) {
+                vm.getPlacePredictions(searchQueryState.value)
+            }
         }
     }
 }

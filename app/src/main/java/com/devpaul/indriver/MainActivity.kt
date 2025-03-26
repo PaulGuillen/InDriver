@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         Timber.plant(Timber.DebugTree())
         if (!Places.isInitialized()) {
-            Places.initialize(this, getString(R.string.google_api_key))
+            Places.initialize(applicationContext, getString(R.string.google_api_key))
             Timber.d("Places API initialized")
         } else {
             Timber.d("Places API already initialized")

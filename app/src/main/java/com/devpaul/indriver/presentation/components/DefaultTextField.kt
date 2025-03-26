@@ -33,6 +33,7 @@ fun DefaultTextField(
     onValueChange: (String) -> Unit,
     keyboardType: KeyboardType = KeyboardType.Text,
     hideText: Boolean = false,
+    enabled: Boolean = true,
 ) {
     Box(
         modifier = modifier
@@ -43,6 +44,7 @@ fun DefaultTextField(
             value = value,
             onValueChange = { onValueChange(it) },
             label = { Text(text = label) },
+            enabled = enabled,
             leadingIcon = {
                 Row {
                     Icon(imageVector = icon, contentDescription = null)

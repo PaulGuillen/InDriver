@@ -26,8 +26,11 @@ class ClientMapSearcherViewModel @Inject constructor(
     private val _placePredictions = MutableStateFlow<List<PlacePrediction>>(emptyList())
     val placePredictions: StateFlow<List<PlacePrediction>> get() = _placePredictions
 
-    private val _selectedPlace = MutableStateFlow<Place?>(null)
-    val selectedPlace: StateFlow<Place?> get() = _selectedPlace
+    private val _originPlace = MutableStateFlow<Place?>(null)
+    val originPlace: StateFlow<Place?> get() = _originPlace
+
+    private val _destinationPlace = MutableStateFlow<Place?>(null)
+    val destinationPlace: StateFlow<Place?> get() = _destinationPlace
 
     var isInteractingWithMap by mutableStateOf(false)
 
@@ -42,9 +45,17 @@ class ClientMapSearcherViewModel @Inject constructor(
         _placePredictions.value = predictions
     }
 
-    fun getPlaceDetails(placeId: String, onPlaceSelected: (place: Place) -> Unit) = viewModelScope.launch {
+    fun getPlaceDetails(
+        placeId: String,
+        isOrigin: Boolean,
+        onPlaceSelected: (place: Place) -> Unit,
+    ) = viewModelScope.launch {
         val place = locationUseCases.getPlaceDetailsUC(placeId)
-        _selectedPlace.value = place
+        if (isOrigin) {
+            _originPlace.value = place
+        } else {
+            _destinationPlace.value = place
+        }
         onPlaceSelected(place)
     }
 }
