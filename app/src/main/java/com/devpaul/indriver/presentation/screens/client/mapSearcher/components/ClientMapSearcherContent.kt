@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,9 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,7 +32,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
@@ -97,7 +93,6 @@ fun ClientMapSearcherContent(
     var showPriceModal by remember { mutableStateOf(false) }
     var isOriginFocused by remember { mutableStateOf(false) }
     val originPlace by vm.originPlace.collectAsState()
-    val sheetState = rememberBottomSheetScaffoldState()
 
     val mapProperties by remember {
         mutableStateOf(
@@ -106,6 +101,12 @@ fun ClientMapSearcherContent(
                 isMyLocationEnabled = true,
             )
         )
+    }
+
+    LaunchedEffect(key1 = originPlace) {
+        originPlace?.let {
+            originQuery = it.address
+        }
     }
 
     LaunchedEffect(key1 = location) {
@@ -150,7 +151,7 @@ fun ClientMapSearcherContent(
                                 modifier = Modifier
                                     .size(30.dp)
                                     .padding(start = 5.dp),
-                                imageVector = Icons.Outlined.Search,
+                                imageVector = Icons.Filled.Search,
                                 contentDescription = null
                             )
                             Text(
@@ -166,7 +167,7 @@ fun ClientMapSearcherContent(
                             .padding(start = 30.dp, end = 30.dp)
                             .clickable {
                                 isOriginFocused = false
-                                showSearchModal = true // MOSTRAR EL  MODAL DE BUSQUEDA
+                                showSearchModal = true
                             },
                         shape = RoundedCornerShape(12.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -182,7 +183,7 @@ fun ClientMapSearcherContent(
                                 modifier = Modifier
                                     .size(30.dp)
                                     .padding(start = 5.dp),
-                                imageVector = Icons.Outlined.LocationOn,
+                                imageVector = Icons.Filled.LocationOn,
                                 contentDescription = null
                             )
                             Text(
@@ -245,6 +246,14 @@ fun ClientMapSearcherContent(
                         properties = mapProperties,
 
                         ) {
+//                        location.let { position ->
+//                            if (position != null) {
+//                                Marker(
+//                                    state = MarkerState(position = position)
+//                                )
+//                            }
+//
+//                        }
                     }
                     Icon(
                         modifier = Modifier
@@ -263,9 +272,9 @@ fun ClientMapSearcherContent(
                         onPlaceSelected = { place ->
                             if (isOriginFocused) {
                                 originQuery = place.address
-                                cameraPositionState.position = CameraPosition.fromLatLngZoom(place.latLng, 14f)
-                            }
-                            else {
+                                cameraPositionState.position =
+                                    CameraPosition.fromLatLngZoom(place.latLng, 14f)
+                            } else {
                                 destinationQuery = place.address
                             }
 
@@ -310,12 +319,14 @@ private fun PlaceSearchModal(
 
     Dialog(
         onDismissRequest = onDismissRequest,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(fraction = 0.75f)
+                .fillMaxHeight(fraction = 0.30f)
+                .padding(start = 10.dp, end = 10.dp)
+                .clip(RoundedCornerShape(20.dp))
                 .background(Color.White)
         ) {
             Column(
@@ -325,20 +336,20 @@ private fun PlaceSearchModal(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(55.dp)
+                        .height(44.dp)
                         .background(Color.Black),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "INTRODUCE TU RUTA",
-                        modifier = Modifier.padding(start = 30.dp),
+                        text = "Introduce tu ruta",
+                        modifier = Modifier.padding(start = 24.dp),
                         color = Color.White,
                         fontSize = 20.sp
                     )
                     IconButton(
                         onClick = onDismissRequest,
-                        modifier = Modifier.padding(end = 30.dp),
+                        modifier = Modifier.padding(end = 10.dp),
                         colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
                     )
                     {
@@ -370,7 +381,7 @@ private fun PlaceSearchModal(
                         .padding(top = 20.dp, start = 20.dp, end = 20.dp),
                     value = destinationSearchQuery,
                     label = "Destino",
-                    icon = Icons.Default.LocationOn,
+                    icon = Icons.Filled.LocationOn,
                     onValueChange = {
                         destinationSearchQuery = it
                         if (!isOriginFocused) {
@@ -445,14 +456,10 @@ private fun PriceModal(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(fraction = 0.75f)
+                .fillMaxHeight(fraction = 0.30f)
+                .padding(start = 10.dp, end = 10.dp)
+                .clip(RoundedCornerShape(20.dp))
                 .background(Color.White)
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 30.dp,
-                        topEnd = 30.dp
-                    )
-                )
         ) {
             Column(
                 modifier = Modifier
@@ -500,8 +507,8 @@ private fun PriceModal(
                 DefaultButton(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 80.dp, start = 30.dp, end = 30.dp),
-                    text = "ASIGNAR PRECIO",
+                        .padding(start = 30.dp, end = 30.dp, bottom = 20.dp),
+                    text = "Asignar Oferta",
                     onClick = {
                         onPriceSelected(priceQuery)
                         onDismissRequest()
@@ -552,6 +559,7 @@ private fun CheckForMapInteraction(
         }
         if (cameraMovementReason == CameraMoveStartedReason.GESTURE && newCameraPosition.target != initialCameraPosition.target) {
             vm.isInteractingWithMap = false
+            vm.getPlaceFromLatLng(newCameraPosition.target)
         }
         initialCameraPosition = newCameraPosition
     }

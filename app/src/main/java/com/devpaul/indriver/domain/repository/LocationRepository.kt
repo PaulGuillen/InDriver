@@ -12,4 +12,6 @@ interface LocationRepository {
 
     suspend fun getPlaceDetails(placeId: String): Place
 
+    suspend fun getPlaceFromLatLong(latLng: LatLng): Place?
+
 }

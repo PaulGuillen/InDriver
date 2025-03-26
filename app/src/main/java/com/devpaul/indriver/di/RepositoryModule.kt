@@ -1,5 +1,6 @@
 package com.devpaul.indriver.di
 
+import android.location.Geocoder
 import com.devpaul.indriver.data.datasource.local.datastore.LocalDataStore
 import com.devpaul.indriver.data.datasource.location.LocationDataSource
 import com.devpaul.indriver.data.datasource.remote.AuthService
@@ -35,6 +36,7 @@ object RepositoryModule {
     fun provideLocationRepository(
         locationDataSource: LocationDataSource,
         placesClient: PlacesClient,
+        geocoder: Geocoder,
     ): LocationRepository =
-        LocationRepositoryImpl(locationDataSource = locationDataSource, placesClient = placesClient)
+        LocationRepositoryImpl(locationDataSource = locationDataSource, placesClient = placesClient, geoCoder = geocoder)
 }

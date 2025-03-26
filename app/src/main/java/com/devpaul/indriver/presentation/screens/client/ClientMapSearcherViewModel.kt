@@ -58,4 +58,10 @@ class ClientMapSearcherViewModel @Inject constructor(
         }
         onPlaceSelected(place)
     }
+
+    fun getPlaceFromLatLng(latLng: LatLng) =
+        viewModelScope.launch {
+            val place = locationUseCases.getPlaceFromLatLngUC(latLng)
+            _originPlace.value = place
+        }
 }
