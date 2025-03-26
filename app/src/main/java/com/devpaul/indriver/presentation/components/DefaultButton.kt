@@ -21,11 +21,12 @@ fun DefaultButton(
     text: String,
     onClick: () -> Unit,
     color: Color = Color.Black,
+    textColor: Color = Color.White,
     height: Dp = 54.dp,
     width: Dp = 250.dp,
 ) {
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Button(
             modifier = modifier
@@ -33,9 +34,13 @@ fun DefaultButton(
                 .width(width)
                 .height(height),
             onClick = { onClick() },
-            colors = ButtonDefaults.buttonColors(color)
+            colors = ButtonDefaults.buttonColors(containerColor = color)
         ) {
-            Text(text, fontSize = 16.sp)
+            Text(
+                text = text,
+                fontSize = 16.sp,
+                color = textColor
+            )
         }
     }
 }

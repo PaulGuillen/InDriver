@@ -16,11 +16,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.LocationOn
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,6 +35,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
@@ -39,12 +47,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,6 +64,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.devpaul.indriver.R
+import com.devpaul.indriver.presentation.components.DefaultButton
 import com.devpaul.indriver.presentation.components.DefaultTextField
 import com.devpaul.indriver.presentation.screens.client.ClientMapSearcherViewModel
 import com.google.android.gms.maps.model.CameraPosition
@@ -62,8 +74,6 @@ import com.google.maps.android.compose.CameraMoveStartedReason
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -79,11 +89,16 @@ fun ClientMapSearcherContent(
     val context = LocalContext.current
     var originQuery by remember { mutableStateOf("") }
     var destinationQuery by remember { mutableStateOf("") }
+    var priceQuery by remember { mutableStateOf("") }
     val location by vm.location.collectAsState()
     val cameraPositionState = rememberCameraPositionState()
-    var isOriginFocused by remember { mutableStateOf(false) }
     var isCameraCentered by remember { mutableStateOf(false) }
     var showSearchModal by remember { mutableStateOf(false) }
+    var showPriceModal by remember { mutableStateOf(false) }
+    var isOriginFocused by remember { mutableStateOf(false) }
+    val originPlace by vm.originPlace.collectAsState()
+    val sheetState = rememberBottomSheetScaffoldState()
+
     val mapProperties by remember {
         mutableStateOf(
             MapProperties(
@@ -103,6 +118,8 @@ fun ClientMapSearcherContent(
     }
 
     BottomSheetScaffold(
+        scaffoldState = rememberBottomSheetScaffoldState(),
+        sheetPeekHeight = calculateSheetHeight(vm = vm),
         sheetContent = {
             AnimatedVisibility(visible = !vm.isInteractingWithMap) {
                 Column(
@@ -110,112 +127,161 @@ fun ClientMapSearcherContent(
                         .fillMaxWidth()
                         .height(calculateSheetHeight(vm = vm))
                         .background(Color.White)
+
                 ) {
                     Card(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .padding(top = 10.dp, start = 30.dp, end = 30.dp)
                             .clickable {
                                 isOriginFocused = true
                                 showSearchModal = true
                             },
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0))
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp)
-                                .padding(horizontal = 12.dp),
+                                .height(50.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = null,
-                                tint = Color.DarkGray
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .padding(start = 5.dp),
+                                imageVector = Icons.Outlined.Search,
+                                contentDescription = null
                             )
                             Text(
-                                text = if (originQuery.isEmpty()) "Recoger en" else originQuery,
-                                modifier = Modifier
-                                    .padding(start = 8.dp)
-                                    .weight(1f),
-                                color = Color.DarkGray
+                                modifier = Modifier.padding(start = 10.dp),
+                                text = originQuery.ifEmpty { "Recoger en...." },
+                                color = Color(0xFF3A3939)
                             )
                         }
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     Card(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .padding(start = 30.dp, end = 30.dp)
                             .clickable {
                                 isOriginFocused = false
-                                showSearchModal = true
+                                showSearchModal = true // MOSTRAR EL  MODAL DE BUSQUEDA
                             },
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0))
                     ) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(50.dp)
-                                .padding(horizontal = 12.dp),
+                                .height(50.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = null,
-                                tint = Color.DarkGray
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .padding(start = 5.dp),
+                                imageVector = Icons.Outlined.LocationOn,
+                                contentDescription = null
                             )
                             Text(
-                                text = if (destinationQuery.isEmpty()) "Destino" else destinationQuery,
-                                modifier = Modifier
-                                    .padding(start = 8.dp)
-                                    .weight(1f),
-                                color = Color.DarkGray
+                                modifier = Modifier.padding(start = 10.dp),
+                                text = destinationQuery.ifEmpty { "Destino" },
+                                color = Color(0xFF3A3939)
                             )
                         }
                     }
-
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Card(
+                        modifier = Modifier
+                            .padding(start = 30.dp, end = 30.dp)
+                            .clickable {
+                                showPriceModal = true // MOSTRAR EL  MODAL DE BUSQUEDA
+                            },
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .padding(start = 5.dp),
+                                imageVector = Icons.Default.Info,
+                                contentDescription = null
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = 10.dp),
+                                text = priceQuery.ifEmpty { "Ofertar precio" },
+                                color = Color(0xFF3A3939)
+                            )
+                        }
+                    }
+                    DefaultButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 30.dp, end = 30.dp, top = 20.dp),
+                        text = "Buscar Conductor",
+                        onClick = { /*TODO*/ }
+                    )
                 }
             }
         },
-        scaffoldState = rememberBottomSheetScaffoldState(),
-        sheetPeekHeight = calculateSheetHeight(vm),
         content = {
             Box(
-                modifier = Modifier.fillMaxHeight(
-                    fraction = if (vm.isInteractingWithMap) 0.95f else 0.6f
-                )
+                modifier = Modifier.fillMaxSize()
             ) {
-                GoogleMap(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    cameraPositionState = cameraPositionState,
-                    properties = mapProperties
-                ) {
-                    location?.let { position ->
-                        Timber.d("PositionScreen: $position")
-                        Marker(
-                            state = MarkerState(position = position)
-                        )
+                Box {
+                    GoogleMap(
+                        modifier = Modifier
+                            .padding(paddingValues),
+                        cameraPositionState = cameraPositionState,
+                        properties = mapProperties,
+
+                        ) {
                     }
+                    Icon(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .align(alignment = Alignment.Center),
+                        painter = painterResource(id = R.drawable.pin),
+                        contentDescription = null,
+                        tint = Color.Unspecified
+                    )
                 }
+
                 CheckForMapInteraction(cameraPositionState = cameraPositionState, vm = vm)
                 if (showSearchModal) {
                     PlaceSearchModal(
-                        onDismissRequest = {
-                            showSearchModal = false
-                        },
+                        onDismissRequest = { showSearchModal = false },
                         onPlaceSelected = { place ->
                             if (isOriginFocused) {
                                 originQuery = place.address
-                            } else {
+                                cameraPositionState.position = CameraPosition.fromLatLngZoom(place.latLng, 14f)
+                            }
+                            else {
                                 destinationQuery = place.address
                             }
+
                             showSearchModal = false
                         },
                         isOriginFocused = isOriginFocused,
                         vm = vm
+                    )
+                }
+                if (showPriceModal) {
+                    PriceModal(
+                        onDismissRequest = { showPriceModal = false },
+                        onPriceSelected = { price ->
+                            priceQuery = price
+                            showPriceModal = false
+                        }
                     )
                 }
             }
@@ -359,9 +425,98 @@ private fun PlaceSearchModal(
 }
 
 @Composable
+private fun PriceModal(
+    onDismissRequest: () -> Unit,
+    onPriceSelected: (string: String) -> Unit
+) {
+    var priceQuery by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
+
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(fraction = 0.75f)
+                .background(Color.White)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 30.dp,
+                        topEnd = 30.dp
+                    )
+                )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(55.dp)
+                        .background(Color.Black),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "INTRODUCE TU OFERTA",
+                        modifier = Modifier.padding(start = 30.dp),
+                        color = Color.White,
+                        fontSize = 20.sp
+                    )
+                    IconButton(
+                        onClick = onDismissRequest,
+                        modifier = Modifier.padding(end = 30.dp),
+                        colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
+                    )
+                    {
+                        Icon(imageVector = Icons.Default.Close, contentDescription = null)
+                    }
+                }
+
+                DefaultTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .focusRequester(focusRequester)
+                        .padding(top = 20.dp, start = 30.dp, end = 30.dp),
+                    value = priceQuery,
+                    label = "Valor de oferta",
+                    icon = Icons.Default.Info,
+                    onValueChange = {
+                        priceQuery = it
+                    },
+                    keyboardType = KeyboardType.Number,
+                    background = Color(0xFFEEEEEE)
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                DefaultButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 80.dp, start = 30.dp, end = 30.dp),
+                    text = "ASIGNAR PRECIO",
+                    onClick = {
+                        onPriceSelected(priceQuery)
+                        onDismissRequest()
+                    }
+                )
+            }
+        }
+    }
+
+}
+
+@Composable
 private fun calculateSheetHeight(vm: ClientMapSearcherViewModel): Dp {
-    val normalHeight = LocalConfiguration.current.screenHeightDp.dp * 0.4f
-    val minimizedHeight = 50.dp
+    val normalHeight = LocalConfiguration.current.screenHeightDp.dp * 0.42f
+    val minimizedHeight = 0.dp
     return animateDpAsState(
         if (vm.isInteractingWithMap) {
             minimizedHeight

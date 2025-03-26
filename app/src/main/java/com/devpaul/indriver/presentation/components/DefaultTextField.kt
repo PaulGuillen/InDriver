@@ -34,6 +34,7 @@ fun DefaultTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     hideText: Boolean = false,
     enabled: Boolean = true,
+    background : Color = Color.White,
 ) {
     Box(
         modifier = modifier
