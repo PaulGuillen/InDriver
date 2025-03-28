@@ -5,4 +5,5 @@ data class LocationUseCases(
     val getPlaceDetailsUC: GetPlaceDetailsUC,
     val getPlacePredictionsUC: GetPlacePredictionsUC,
     val getPlaceFromLatLngUC: GetPlaceFromLatLngUC,
+    val getRouteUC: GetRouteUC,
 )

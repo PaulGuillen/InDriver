@@ -70,6 +70,7 @@ import com.google.maps.android.compose.CameraMoveStartedReason
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.delay
 import timber.log.Timber
@@ -93,6 +94,7 @@ fun ClientMapSearcherContent(
     var showPriceModal by remember { mutableStateOf(false) }
     var isOriginFocused by remember { mutableStateOf(false) }
     val originPlace by vm.originPlace.collectAsState()
+    val route by vm.route.collectAsState()
 
     val mapProperties by remember {
         mutableStateOf(
@@ -246,6 +248,15 @@ fun ClientMapSearcherContent(
                         properties = mapProperties,
 
                         ) {
+
+                        route?.let { routePoints ->
+                            Polyline(
+                                points = routePoints,
+                                color = Color.Green,
+                                width = 14f,
+                            )
+
+                        }
 //                        location.let { position ->
 //                            if (position != null) {
 //                                Marker(
@@ -276,6 +287,10 @@ fun ClientMapSearcherContent(
                                     CameraPosition.fromLatLngZoom(place.latLng, 14f)
                             } else {
                                 destinationQuery = place.address
+                            }
+
+                            if (!originQuery.isNullOrBlank() && !destinationQuery.isNullOrBlank()) {
+                                vm.getRoute()
                             }
 
                             showSearchModal = false

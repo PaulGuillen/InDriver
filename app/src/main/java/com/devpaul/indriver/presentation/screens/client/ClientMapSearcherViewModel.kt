@@ -32,6 +32,9 @@ class ClientMapSearcherViewModel @Inject constructor(
     private val _destinationPlace = MutableStateFlow<Place?>(null)
     val destinationPlace: StateFlow<Place?> get() = _destinationPlace
 
+    private val _route = MutableStateFlow<List<LatLng>?>(null)
+    val route: StateFlow<List<LatLng>?> get() = _route
+
     var isInteractingWithMap by mutableStateOf(false)
 
     fun startLocationUpdates() = viewModelScope.launch {
@@ -64,4 +67,14 @@ class ClientMapSearcherViewModel @Inject constructor(
             val place = locationUseCases.getPlaceFromLatLngUC(latLng)
             _originPlace.value = place
         }
+
+    fun getRoute() = viewModelScope.launch {
+        if (_originPlace.value == null || _destinationPlace.value == null) {
+            _route.value = locationUseCases.getRouteUC(
+                _originPlace.value!!.latLng,
+                _destinationPlace.value!!.latLng
+            )
+        }
+
+    }
 }

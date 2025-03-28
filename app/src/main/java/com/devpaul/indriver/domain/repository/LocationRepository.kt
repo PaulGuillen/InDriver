@@ -14,4 +14,6 @@ interface LocationRepository {
 
     suspend fun getPlaceFromLatLong(latLng: LatLng): Place?
 
+    suspend fun getRoute(origin: LatLng, destination: LatLng): List<LatLng>?
+
 }

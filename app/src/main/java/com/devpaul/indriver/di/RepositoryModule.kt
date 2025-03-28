@@ -4,6 +4,7 @@ import android.location.Geocoder
 import com.devpaul.indriver.data.datasource.local.datastore.LocalDataStore
 import com.devpaul.indriver.data.datasource.location.LocationDataSource
 import com.devpaul.indriver.data.datasource.remote.AuthService
+import com.devpaul.indriver.data.datasource.remote.GoogleMapService
 import com.devpaul.indriver.data.datasource.remote.UserService
 import com.devpaul.indriver.data.repository.AuthRepositoryImpl
 import com.devpaul.indriver.data.repository.LocationRepositoryImpl
@@ -37,6 +38,12 @@ object RepositoryModule {
         locationDataSource: LocationDataSource,
         placesClient: PlacesClient,
         geocoder: Geocoder,
+        googleMapsService: GoogleMapService
     ): LocationRepository =
-        LocationRepositoryImpl(locationDataSource = locationDataSource, placesClient = placesClient, geoCoder = geocoder)
+        LocationRepositoryImpl(
+            locationDataSource = locationDataSource,
+            placesClient = placesClient,
+            geoCoder = geocoder,
+            googleMapsService = googleMapsService
+        )
 }
