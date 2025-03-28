@@ -15,4 +15,4 @@ interface GoogleMapService {
 }
 
 //Do a mock
-//https://maps.googleapis.com/maps/api/directions/json?origin=4.7149833,-74.072092&destination=4.7149833,-74.072092&key=AIzaSyDWRwRVIx8Y_q_87zeufJf3LCPFXEmbfeo
+//https://maps.googleapis.com/maps/api/directions/json?origin=4.7149833,-74.072092&destination=4.7149833,-74.072092&key=
