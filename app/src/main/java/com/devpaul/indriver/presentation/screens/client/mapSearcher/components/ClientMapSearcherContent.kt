@@ -1,5 +1,6 @@
 package com.devpaul.indriver.presentation.screens.client.mapSearcher.components
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -29,6 +30,7 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -73,16 +75,14 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.delay
-import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClientMapSearcherContent(
     navHostController: NavHostController,
     paddingValues: PaddingValues,
-    vm: ClientMapSearcherViewModel = hiltViewModel(),
+    vm: ClientMapSearcherViewModel = hiltViewModel()
 ) {
-
     val context = LocalContext.current
     var originQuery by remember { mutableStateOf("") }
     var destinationQuery by remember { mutableStateOf("") }
@@ -95,34 +95,29 @@ fun ClientMapSearcherContent(
     var isOriginFocused by remember { mutableStateOf(false) }
     val originPlace by vm.originPlace.collectAsState()
     val route by vm.route.collectAsState()
-
     val mapProperties by remember {
         mutableStateOf(
             MapProperties(
                 mapStyleOptions = MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style),
-                isMyLocationEnabled = true,
+                isMyLocationEnabled = true
             )
         )
     }
 
     LaunchedEffect(key1 = originPlace) {
-        originPlace?.let {
-            originQuery = it.address
+        originPlace?.let { place ->
+            originQuery = place.address ?: ""
         }
     }
 
     LaunchedEffect(key1 = location) {
         if (location != null && !isCameraCentered) {
-            cameraPositionState.position = CameraPosition.fromLatLngZoom(
-                location!!, 14f
-            )
+            cameraPositionState.position = CameraPosition.fromLatLngZoom(location!!, 14f)
             isCameraCentered = true
         }
     }
 
     BottomSheetScaffold(
-        scaffoldState = rememberBottomSheetScaffoldState(),
-        sheetPeekHeight = calculateSheetHeight(vm = vm),
         sheetContent = {
             AnimatedVisibility(visible = !vm.isInteractingWithMap) {
                 Column(
@@ -130,7 +125,6 @@ fun ClientMapSearcherContent(
                         .fillMaxWidth()
                         .height(calculateSheetHeight(vm = vm))
                         .background(Color.White)
-
                 ) {
                     Card(
                         modifier = Modifier
@@ -236,6 +230,8 @@ fun ClientMapSearcherContent(
                 }
             }
         },
+        scaffoldState = rememberBottomSheetScaffoldState(),
+        sheetPeekHeight = calculateSheetHeight(vm = vm),
         content = {
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -252,19 +248,10 @@ fun ClientMapSearcherContent(
                         route?.let { routePoints ->
                             Polyline(
                                 points = routePoints,
-                                color = Color.Green,
-                                width = 14f,
+                                color = Color(0xFFFFE600),
+                                width = 15f
                             )
-
                         }
-//                        location.let { position ->
-//                            if (position != null) {
-//                                Marker(
-//                                    state = MarkerState(position = position)
-//                                )
-//                            }
-//
-//                        }
                     }
                     Icon(
                         modifier = Modifier
@@ -276,7 +263,8 @@ fun ClientMapSearcherContent(
                     )
                 }
 
-                CheckForMapInteraction(cameraPositionState = cameraPositionState, vm = vm)
+
+                checkForMapInteraction(cameraPositionState = cameraPositionState, vm = vm)
                 if (showSearchModal) {
                     PlaceSearchModal(
                         onDismissRequest = { showSearchModal = false },
@@ -288,11 +276,9 @@ fun ClientMapSearcherContent(
                             } else {
                                 destinationQuery = place.address
                             }
-
-                            if (!originQuery.isNullOrBlank() && !destinationQuery.isNullOrBlank()) {
+                            if (originQuery.isNotBlank() && destinationQuery.isNotBlank()) {
                                 vm.getRoute()
                             }
-
                             showSearchModal = false
                         },
                         isOriginFocused = isOriginFocused,
@@ -311,6 +297,7 @@ fun ClientMapSearcherContent(
             }
         }
     )
+
 }
 
 @Composable
@@ -334,7 +321,7 @@ private fun PlaceSearchModal(
 
     Dialog(
         onDismissRequest = onDismissRequest,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Box(
             modifier = Modifier
@@ -391,7 +378,6 @@ private fun PlaceSearchModal(
                 DefaultTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-//                        .background(if (!isOriginFocused) Color.Gray else Color.Transparent)
                         .focusRequester(if (!isOriginFocused) focusRequester else FocusRequester())
                         .padding(top = 20.dp, start = 20.dp, end = 20.dp),
                     value = destinationSearchQuery,
@@ -433,6 +419,7 @@ private fun PlaceSearchModal(
                                     }
                             )
                         }
+                        HorizontalDivider(color = Color(0xFFEEEEEE))
                     }
                 }
             }
@@ -440,7 +427,6 @@ private fun PlaceSearchModal(
     }
 
     LaunchedEffect(searchQueryState.value) {
-        Timber.d("SearchQuery: ${searchQueryState.value}")
         if (searchQueryState.value.isNotEmpty()) {
             delay(500)
             if (searchQueryState.value == if (isOriginFocused) originSearchQuery else destinationSearchQuery) {
@@ -550,9 +536,9 @@ private fun calculateSheetHeight(vm: ClientMapSearcherViewModel): Dp {
 }
 
 @Composable
-private fun CheckForMapInteraction(
+private fun checkForMapInteraction(
     cameraPositionState: CameraPositionState,
-    vm: ClientMapSearcherViewModel,
+    vm: ClientMapSearcherViewModel
 ) {
     var initialCameraPosition by remember { mutableStateOf(cameraPositionState.position) }
 
@@ -563,28 +549,29 @@ private fun CheckForMapInteraction(
 
     val onMapCameraIdle: (cameraPosition: CameraPosition) -> Unit = { newCameraPosition ->
         val cameraMovementReason = cameraPositionState.cameraMoveStartedReason
-        if (newCameraPosition.zoom < initialCameraPosition.zoom) {
-            vm.isInteractingWithMap = false
-        }
-        if (newCameraPosition.zoom > initialCameraPosition.zoom) {
-            vm.isInteractingWithMap = false
-        }
-        if (newCameraPosition.bearing != initialCameraPosition.bearing) {
-            vm.isInteractingWithMap = false
-        }
-        if (cameraMovementReason == CameraMoveStartedReason.GESTURE && newCameraPosition.target != initialCameraPosition.target) {
-            vm.isInteractingWithMap = false
-            vm.getPlaceFromLatLng(newCameraPosition.target)
+//        if (newCameraPosition.zoom < initialCameraPosition.zoom) {
+//            vm.isInteractingWithMap = false
+//        }
+//        if (newCameraPosition.zoom > initialCameraPosition.zoom) {
+//            vm.isInteractingWithMap = false
+//        }
+//        if (newCameraPosition.bearing != initialCameraPosition.bearing) {
+//            vm.isInteractingWithMap = false
+//        }
+        if (cameraMovementReason == CameraMoveStartedReason.GESTURE) {
+            if (newCameraPosition.target != initialCameraPosition.target) {
+//                vm.isInteractingWithMap = false
+                vm.getPlaceFromLatLng(newCameraPosition.target)
+
+            }
         }
         initialCameraPosition = newCameraPosition
     }
 
     LaunchedEffect(key1 = cameraPositionState.isMoving) {
-        if (cameraPositionState.isMoving) {
-            onMapCameraMoveStart(cameraPositionState.position)
-        } else {
-            onMapCameraIdle(cameraPositionState.position)
-        }
+        vm.isInteractingWithMap = cameraPositionState.isMoving
+        onMapCameraIdle(cameraPositionState.position)
+//        if (cameraPositionState.isMoving) onMapCameraMoveStart(cameraPositionState.position) else onMapCameraIdle(cameraPositionState.position)
     }
 
 }
