@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -34,7 +35,6 @@ fun DefaultTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     hideText: Boolean = false,
     enabled: Boolean = true,
-    background : Color = Color.White,
 ) {
     Box(
         modifier = modifier
@@ -61,7 +61,9 @@ fun DefaultTextField(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
-            )
+
+            ),
+            textStyle = TextStyle(color = Color.Black)
         )
     }
 }

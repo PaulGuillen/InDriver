@@ -37,8 +37,6 @@ class ResponseMapper {
             name = registerRole.name,
             image = registerRole.image,
             route = registerRole.route,
-            createdAt = registerRole.createdAt,
-            updatedAt = registerRole.updatedAt
         )
     }
 

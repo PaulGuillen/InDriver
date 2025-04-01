@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.devpaul.indriver.presentation.navigation.Graph
 import com.devpaul.indriver.presentation.navigation.graph.auth.authNavGraph
+import com.devpaul.indriver.presentation.navigation.graph.roles.rolesNavGraph
 
 @Composable
 fun RootNavGraph(navHostController: NavHostController) {
@@ -14,5 +15,6 @@ fun RootNavGraph(navHostController: NavHostController) {
         startDestination = Graph.AUTH
     ) {
        authNavGraph(navHostController)
+        rolesNavGraph(navHostController)
     }
 }

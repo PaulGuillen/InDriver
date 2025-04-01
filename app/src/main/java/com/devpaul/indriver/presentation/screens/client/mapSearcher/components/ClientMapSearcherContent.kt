@@ -1,6 +1,5 @@
 package com.devpaul.indriver.presentation.screens.client.mapSearcher.components
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -502,7 +501,6 @@ private fun PriceModal(
                         priceQuery = it
                     },
                     keyboardType = KeyboardType.Number,
-                    background = Color(0xFFEEEEEE)
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 DefaultButton(
