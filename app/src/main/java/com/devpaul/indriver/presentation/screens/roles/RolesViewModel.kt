@@ -16,7 +16,7 @@ class RolesViewModel @Inject constructor(
     private val authUseCases: AuthUseCases,
 ) : ViewModel() {
 
-    var authReponse by mutableStateOf(LoginResponse())
+    var authResponse by mutableStateOf(LoginResponse())
 
     init {
         getSessionData()
@@ -25,7 +25,7 @@ class RolesViewModel @Inject constructor(
     fun getSessionData() = viewModelScope.launch {
         authUseCases.getSession().collect() { data ->
             if (!data.token.isNullOrBlank()) {
-                authReponse = data
+                authResponse = data
             }
         }
     }

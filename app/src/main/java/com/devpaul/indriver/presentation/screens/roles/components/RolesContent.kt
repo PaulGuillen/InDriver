@@ -20,7 +20,7 @@ fun RolesContent(
     vm: RolesViewModel = hiltViewModel()
 ) {
 
-    val roles = vm.authReponse.user?.roles
+    val roles = vm.authResponse.user?.roles
 
     LazyColumn(
         modifier = Modifier

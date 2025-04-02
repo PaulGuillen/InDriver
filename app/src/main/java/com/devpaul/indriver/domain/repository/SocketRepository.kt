@@ -1,7 +1,7 @@
 package com.devpaul.indriver.domain.repository
 
-import com.google.gson.JsonObject
 import io.socket.emitter.Emitter
+import org.json.JSONObject
 
 interface SocketRepository {
 
@@ -9,7 +9,7 @@ interface SocketRepository {
 
     fun disconnect()
 
-    fun emitEvent(event: String, data: JsonObject)
+    fun emitEvent(event: String, data: JSONObject)
 
     fun setEventListener(event: String, listener: Emitter.Listener)
 }

@@ -1,11 +1,11 @@
 package com.devpaul.indriver.domain.usecase.socket
 
 import com.devpaul.indriver.domain.repository.SocketRepository
-import com.google.gson.JsonObject
+import org.json.JSONObject
 
 class EmitSocketUC(private val socketRepository: SocketRepository) {
 
-    operator fun invoke(event: String, data: JsonObject) {
+    operator fun invoke(event: String, data: JSONObject) {
         socketRepository.emitEvent(event, data)
     }
 }
