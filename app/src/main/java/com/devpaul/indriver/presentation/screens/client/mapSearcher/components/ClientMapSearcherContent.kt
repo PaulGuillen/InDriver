@@ -75,6 +75,8 @@ import com.google.maps.android.compose.CameraMoveStartedReason
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.delay
@@ -93,7 +95,7 @@ fun ClientMapSearcherContent(
     val location by vm.location.collectAsState()
     val cameraPositionState = rememberCameraPositionState()
     var isCameraCentered by remember { mutableStateOf(false) }
-    val isMapReady by remember { mutableStateOf(false) }
+    var isMapReady by remember { mutableStateOf(false) }
     var originMarkerPlace by remember { mutableStateOf<LatLng?>(null) }
     var originMarkerDescriptor by remember { mutableStateOf<BitmapDescriptor?>(null) }
     var destinationMarkerDescriptor by remember { mutableStateOf<BitmapDescriptor?>(null) }
@@ -102,6 +104,10 @@ fun ClientMapSearcherContent(
     var isOriginFocused by remember { mutableStateOf(false) }
     val originPlace by vm.originPlace.collectAsState()
     val route by vm.route.collectAsState()
+    val destinationPlace by vm.destinationPlace.collectAsState()
+    var driverMarkerDescriptor by remember { mutableStateOf<BitmapDescriptor?>(null) }
+    val driverMarkers by vm.driverMarkers.collectAsState()
+
 
     val mapProperties by remember {
         mutableStateOf(
@@ -120,15 +126,15 @@ fun ClientMapSearcherContent(
 
     LaunchedEffect(key1 = isMapReady) {
         if (isMapReady) {
-            if (isMapReady){
-                originMarkerDescriptor =
-                    context.bitmapDescriptorFromVector(R.drawable.pin_map_128, 128, 128)
-                destinationMarkerDescriptor =
-                    context.bitmapDescriptorFromVector(R.drawable.flag_128, 128, 128)
-                vm.connectSocketIO()
-                vm.listenerDriverPositionSocket()
-                vm.listenerDriverDisconnectedSocket()
-            }
+            originMarkerDescriptor =
+                context.bitmapDescriptorFromVector(R.drawable.pin_map_128, 128, 128)
+            destinationMarkerDescriptor =
+                context.bitmapDescriptorFromVector(R.drawable.flag_128, 128, 128)
+            driverMarkerDescriptor =
+                context.bitmapDescriptorFromVector(R.drawable.icon_taxi, 128, 128)
+            vm.connectSocketIO()
+            vm.listenerDriversPositionSocket()
+            vm.listenerDriversDisconnectedSocket()
         }
     }
 
@@ -274,17 +280,40 @@ fun ClientMapSearcherContent(
                             .padding(paddingValues),
                         cameraPositionState = cameraPositionState,
                         properties = mapProperties,
-
+                        onMapLoaded =  {
+                            isMapReady = true
+                        }
                         ) {
 
                         route?.let { routePoints ->
                             Polyline(
                                 points = routePoints,
                                 color = Color(0xFFFFE600),
-                                width = 15f
+                                width = 15f,
+                            )
+
+                            if (originPlace?.latLng != null && destinationPlace?.latLng != null) {
+                                if (originMarkerPlace != null) {
+                                    Marker(
+                                        icon = originMarkerDescriptor,
+                                        state = MarkerState(position = originMarkerPlace!!)
+                                    )
+                                }
+                                Marker(
+                                    icon = destinationMarkerDescriptor,
+                                    state = MarkerState(position = destinationPlace?.latLng!!)
+                                )
+                            }
+                        }
+
+                        driverMarkers?.forEach { (idSocket, position) ->
+                            Marker(
+                                state = MarkerState(position = position),
+                                icon = driverMarkerDescriptor
                             )
                         }
                     }
+
                     Icon(
                         modifier = Modifier
                             .size(50.dp)
@@ -294,7 +323,6 @@ fun ClientMapSearcherContent(
                         tint = Color.Unspecified
                     )
                 }
-
 
                 checkForMapInteraction(cameraPositionState = cameraPositionState, vm = vm)
                 if (showSearchModal) {
@@ -329,7 +357,6 @@ fun ClientMapSearcherContent(
             }
         }
     )
-
 }
 
 @Composable

@@ -42,6 +42,9 @@ class ClientMapSearcherViewModel @Inject constructor(
 
     var isInteractingWithMap by mutableStateOf(false)
 
+    private val _driverMarkers = MutableStateFlow<Map<String, LatLng>>(emptyMap())
+    val driverMarkers: StateFlow<Map<String, LatLng>> get() = _driverMarkers
+
     fun startLocationUpdates() = viewModelScope.launch {
         locationUseCases.getLocationUpdateUC { position ->
             _location.value = position
@@ -82,27 +85,41 @@ class ClientMapSearcherViewModel @Inject constructor(
         }
     }
 
-    fun connectSocketIO(){
+    fun connectSocketIO() {
         socketUseCases.connectSocketUC()
+        Timber.d("ClientMapSearcher ViewModel: connectSocketIO")
     }
 
-    fun disconnectSocketIO(){
+    fun disconnectSocketIO() {
         socketUseCases.disconnectSocketUC()
     }
 
-    fun listenerDriverPositionSocket() {
-        socketUseCases.setEventListenerSocketUC("new_driver_position", Emitter.Listener {
-            val data = it[0] as JSONObject
-            Timber.d("Driver position: $data")
-        }
-        )
+    fun listenerDriversPositionSocket() {
+        socketUseCases.setEventListenerSocketUC("new_driver_position", Emitter.Listener { args ->
+            val data = args[0] as JSONObject
+            val idSocket = data.getString("id_socket")
+            val id = data.getString("id")
+            val lat = data.getDouble("lat")
+            val lng = data.getDouble("lng")
+            val newPosition = LatLng(lat, lng)
+            Timber.d("ClientMapSearcher ViewModel: $data")
+            viewModelScope.launch {
+                _driverMarkers.value = _driverMarkers.value.toMutableMap().apply {
+                    put(idSocket, newPosition)
+                }
+            }
+        })
     }
 
-    fun listenerDriverDisconnectedSocket() {
-        socketUseCases.setEventListenerSocketUC("driver_disconnected", Emitter.Listener {
-            val data = it[0] as JSONObject
-            Timber.d("Driver disconnected: $data")
-        }
-        )
+    fun listenerDriversDisconnectedSocket() {
+        socketUseCases.setEventListenerSocketUC("driver_disconnected", Emitter.Listener { args ->
+            val data = args[0] as JSONObject
+            val idSocket = data.getString("id_socket")
+            viewModelScope.launch {
+                _driverMarkers.value = _driverMarkers.value.toMutableMap().apply {
+                    remove(idSocket)
+                }
+            }
+        })
     }
 }
