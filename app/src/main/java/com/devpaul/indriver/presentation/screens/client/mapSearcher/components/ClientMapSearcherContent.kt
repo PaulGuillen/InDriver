@@ -24,7 +24,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -64,7 +65,10 @@ import com.devpaul.indriver.R
 import com.devpaul.indriver.presentation.components.DefaultButton
 import com.devpaul.indriver.presentation.components.DefaultTextField
 import com.devpaul.indriver.presentation.screens.client.ClientMapSearcherViewModel
+import com.devpaul.indriver.presentation.util.bitmapDescriptorFromVector
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.libraries.places.api.model.Place
 import com.google.maps.android.compose.CameraMoveStartedReason
@@ -89,11 +93,16 @@ fun ClientMapSearcherContent(
     val location by vm.location.collectAsState()
     val cameraPositionState = rememberCameraPositionState()
     var isCameraCentered by remember { mutableStateOf(false) }
+    val isMapReady by remember { mutableStateOf(false) }
+    var originMarkerPlace by remember { mutableStateOf<LatLng?>(null) }
+    var originMarkerDescriptor by remember { mutableStateOf<BitmapDescriptor?>(null) }
+    var destinationMarkerDescriptor by remember { mutableStateOf<BitmapDescriptor?>(null) }
     var showSearchModal by remember { mutableStateOf(false) }
     var showPriceModal by remember { mutableStateOf(false) }
     var isOriginFocused by remember { mutableStateOf(false) }
     val originPlace by vm.originPlace.collectAsState()
     val route by vm.route.collectAsState()
+
     val mapProperties by remember {
         mutableStateOf(
             MapProperties(
@@ -101,6 +110,22 @@ fun ClientMapSearcherContent(
                 isMyLocationEnabled = true
             )
         )
+    }
+
+    LaunchedEffect(key1 = route) {
+        if (route != null) {
+            originMarkerPlace = originPlace?.latLng
+        }
+    }
+
+    LaunchedEffect(key1 = isMapReady) {
+        if (isMapReady) {
+            originMarkerDescriptor =
+                context.bitmapDescriptorFromVector(R.drawable.pin_map_128, 128, 128)
+            destinationMarkerDescriptor =
+                context.bitmapDescriptorFromVector(R.drawable.flag_128, 128, 128)
+
+        }
     }
 
     LaunchedEffect(key1 = originPlace) {
@@ -146,7 +171,7 @@ fun ClientMapSearcherContent(
                                 modifier = Modifier
                                     .size(30.dp)
                                     .padding(start = 5.dp),
-                                imageVector = Icons.Filled.Search,
+                                imageVector = Icons.Outlined.Search,
                                 contentDescription = null
                             )
                             Text(
@@ -162,7 +187,7 @@ fun ClientMapSearcherContent(
                             .padding(start = 30.dp, end = 30.dp)
                             .clickable {
                                 isOriginFocused = false
-                                showSearchModal = true
+                                showSearchModal = true // MOSTRAR EL  MODAL DE BUSQUEDA
                             },
                         shape = RoundedCornerShape(12.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -195,9 +220,12 @@ fun ClientMapSearcherContent(
                             .clickable {
                                 showPriceModal = true // MOSTRAR EL  MODAL DE BUSQUEDA
                             },
-                        shape = RoundedCornerShape(12.dp),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0))
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 2.dp
+                        ),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFF5F5F5)
+                        )
                     ) {
                         Row(
                             modifier = Modifier
@@ -209,7 +237,7 @@ fun ClientMapSearcherContent(
                                 modifier = Modifier
                                     .size(30.dp)
                                     .padding(start = 5.dp),
-                                imageVector = Icons.Default.Info,
+                                imageVector = Icons.Outlined.Info,
                                 contentDescription = null
                             )
                             Text(
@@ -219,6 +247,7 @@ fun ClientMapSearcherContent(
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.height(10.dp))
                     DefaultButton(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -456,10 +485,14 @@ private fun PriceModal(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(fraction = 0.30f)
-                .padding(start = 10.dp, end = 10.dp)
-                .clip(RoundedCornerShape(20.dp))
+                .fillMaxHeight(fraction = 0.75f)
                 .background(Color.White)
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 30.dp,
+                        topEnd = 30.dp
+                    )
+                )
         ) {
             Column(
                 modifier = Modifier
@@ -540,27 +573,12 @@ private fun checkForMapInteraction(
 ) {
     var initialCameraPosition by remember { mutableStateOf(cameraPositionState.position) }
 
-    val onMapCameraMoveStart: (cameraPosition: CameraPosition) -> Unit = { newPosition ->
-        initialCameraPosition = newPosition
-        vm.isInteractingWithMap = true
-    }
 
     val onMapCameraIdle: (cameraPosition: CameraPosition) -> Unit = { newCameraPosition ->
         val cameraMovementReason = cameraPositionState.cameraMoveStartedReason
-//        if (newCameraPosition.zoom < initialCameraPosition.zoom) {
-//            vm.isInteractingWithMap = false
-//        }
-//        if (newCameraPosition.zoom > initialCameraPosition.zoom) {
-//            vm.isInteractingWithMap = false
-//        }
-//        if (newCameraPosition.bearing != initialCameraPosition.bearing) {
-//            vm.isInteractingWithMap = false
-//        }
         if (cameraMovementReason == CameraMoveStartedReason.GESTURE) {
             if (newCameraPosition.target != initialCameraPosition.target) {
-//                vm.isInteractingWithMap = false
                 vm.getPlaceFromLatLng(newCameraPosition.target)
-
             }
         }
         initialCameraPosition = newCameraPosition
@@ -569,7 +587,6 @@ private fun checkForMapInteraction(
     LaunchedEffect(key1 = cameraPositionState.isMoving) {
         vm.isInteractingWithMap = cameraPositionState.isMoving
         onMapCameraIdle(cameraPositionState.position)
-//        if (cameraPositionState.isMoving) onMapCameraMoveStart(cameraPositionState.position) else onMapCameraIdle(cameraPositionState.position)
     }
 
 }

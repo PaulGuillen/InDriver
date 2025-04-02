@@ -1,20 +1,77 @@
 package com.devpaul.indriver.presentation.screens.driver.mapMyLocation
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.devpaul.indriver.presentation.screens.driver.DriverMyLocationViewModel
+import com.devpaul.indriver.presentation.screens.driver.mapMyLocation.components.DriverMapMyLocationContent
 
 @Composable
 fun DriverMapMyLocationScreen(
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    vm: DriverMyLocationViewModel = hiltViewModel(),
 ) {
-    Scaffold { paddingValues ->
-        Text(
-            modifier = Modifier.padding(paddingValues),
-            text = "Mapa de mi ubicación"
+    val context = LocalContext.current
+
+    var hasPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
         )
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            hasPermission = isGranted
+            if (isGranted) {
+                vm.startLocationUpdates()
+            }
+        }
+    )
+
+    LaunchedEffect(Unit) {
+        if (!hasPermission) {
+            permissionLauncher.launch(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        } else {
+            vm.startLocationUpdates()
+        }
+    }
+
+    Scaffold(
+        contentWindowInsets = WindowInsets.navigationBars
+    ) { paddingValues ->
+        if (hasPermission) {
+            DriverMapMyLocationContent(
+                navHostController = navHostController,
+                paddingValues = paddingValues,
+            )
+        } else {
+            Text(
+                text = "No permission",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            )
+        }
     }
 }
