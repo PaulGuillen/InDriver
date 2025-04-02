@@ -120,11 +120,15 @@ fun ClientMapSearcherContent(
 
     LaunchedEffect(key1 = isMapReady) {
         if (isMapReady) {
-            originMarkerDescriptor =
-                context.bitmapDescriptorFromVector(R.drawable.pin_map_128, 128, 128)
-            destinationMarkerDescriptor =
-                context.bitmapDescriptorFromVector(R.drawable.flag_128, 128, 128)
-
+            if (isMapReady){
+                originMarkerDescriptor =
+                    context.bitmapDescriptorFromVector(R.drawable.pin_map_128, 128, 128)
+                destinationMarkerDescriptor =
+                    context.bitmapDescriptorFromVector(R.drawable.flag_128, 128, 128)
+                vm.connectSocketIO()
+                vm.listenerDriverPositionSocket()
+                vm.listenerDriverDisconnectedSocket()
+            }
         }
     }
 

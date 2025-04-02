@@ -7,17 +7,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devpaul.indriver.domain.model.res.PlacePrediction
 import com.devpaul.indriver.domain.usecase.location.LocationUseCases
+import com.devpaul.indriver.domain.usecase.socket.SocketUseCases
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.Place
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.socket.emitter.Emitter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class ClientMapSearcherViewModel @Inject constructor(
     private val locationUseCases: LocationUseCases,
+    private val socketUseCases: SocketUseCases,
 ) : ViewModel() {
 
     private val _location = MutableStateFlow<LatLng?>(null)
@@ -75,6 +80,29 @@ class ClientMapSearcherViewModel @Inject constructor(
                 _destinationPlace.value!!.latLng
             )
         }
+    }
 
+    fun connectSocketIO(){
+        socketUseCases.connectSocketUC()
+    }
+
+    fun disconnectSocketIO(){
+        socketUseCases.disconnectSocketUC()
+    }
+
+    fun listenerDriverPositionSocket() {
+        socketUseCases.setEventListenerSocketUC("new_driver_position", Emitter.Listener {
+            val data = it[0] as JSONObject
+            Timber.d("Driver position: $data")
+        }
+        )
+    }
+
+    fun listenerDriverDisconnectedSocket() {
+        socketUseCases.setEventListenerSocketUC("driver_disconnected", Emitter.Listener {
+            val data = it[0] as JSONObject
+            Timber.d("Driver disconnected: $data")
+        }
+        )
     }
 }
