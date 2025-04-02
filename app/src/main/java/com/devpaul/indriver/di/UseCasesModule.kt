@@ -2,6 +2,7 @@ package com.devpaul.indriver.di
 
 import com.devpaul.indriver.domain.repository.AuthRepository
 import com.devpaul.indriver.domain.repository.LocationRepository
+import com.devpaul.indriver.domain.repository.SocketRepository
 import com.devpaul.indriver.domain.repository.UserRepository
 import com.devpaul.indriver.domain.usecase.auth.AuthUseCases
 import com.devpaul.indriver.domain.usecase.user.GetSessionUC
@@ -14,6 +15,11 @@ import com.devpaul.indriver.domain.usecase.location.GetPlaceFromLatLngUC
 import com.devpaul.indriver.domain.usecase.location.GetPlacePredictionsUC
 import com.devpaul.indriver.domain.usecase.location.GetRouteUC
 import com.devpaul.indriver.domain.usecase.location.LocationUseCases
+import com.devpaul.indriver.domain.usecase.socket.ConnectSocketUC
+import com.devpaul.indriver.domain.usecase.socket.DisconnectSocketUC
+import com.devpaul.indriver.domain.usecase.socket.EmitSocketUC
+import com.devpaul.indriver.domain.usecase.socket.SetEventListenerSocketUC
+import com.devpaul.indriver.domain.usecase.socket.SocketUseCases
 import com.devpaul.indriver.domain.usecase.user.SaveSessionUC
 import com.devpaul.indriver.domain.usecase.user.UpdateSessionUC
 import com.devpaul.indriver.domain.usecase.user.UserUpdateUC
@@ -49,5 +55,13 @@ object UseCasesModule {
         getPlacePredictionsUC = GetPlacePredictionsUC(locationRepository = locationRepository),
         getPlaceFromLatLngUC = GetPlaceFromLatLngUC(locationRepository = locationRepository),
         getRouteUC = GetRouteUC(locationRepository = locationRepository),
+    )
+
+    @Provides
+    fun provideSocketCase(socketRepository: SocketRepository) = SocketUseCases(
+        connectSocketUC = ConnectSocketUC(socketRepository),
+        disconnectSocketUC = DisconnectSocketUC(socketRepository),
+        emitSocketUC = EmitSocketUC(socketRepository),
+        setEventListenerSocketUC = SetEventListenerSocketUC(socketRepository),
     )
 }

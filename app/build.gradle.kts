@@ -114,6 +114,9 @@ dependencies {
     //Files
     implementation(libs.commons.io)
 
+    //Native io socket client
+    implementation (libs.socket.io.client)
+
     //Maps
     implementation(libs.play.services.maps)
     implementation(libs.maps.compose)

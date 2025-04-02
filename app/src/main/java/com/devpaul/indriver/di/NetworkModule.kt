@@ -10,6 +10,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.socket.client.IO
+import io.socket.client.Socket
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -45,6 +47,19 @@ object NetworkModule {
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideSocket(): Socket {
+        val options = IO.Options().apply {
+            forceNew = true
+            reconnection = true
+            reconnectionAttempts = 5
+            reconnectionDelay = 1000
+            transports = arrayOf("websocket")
+        }
+        return IO.socket(Config.BASE_URL_SOCKET, options)
     }
 
     @Provides

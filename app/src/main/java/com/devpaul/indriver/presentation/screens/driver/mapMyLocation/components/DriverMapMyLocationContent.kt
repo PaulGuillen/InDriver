@@ -3,7 +3,6 @@ package com.devpaul.indriver.presentation.screens.driver.mapMyLocation.component
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -11,11 +10,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.devpaul.indriver.R
+import com.devpaul.indriver.presentation.components.DefaultButton
 import com.devpaul.indriver.presentation.screens.driver.DriverMyLocationViewModel
 import com.devpaul.indriver.presentation.util.bitmapDescriptorFromVector
 import com.google.android.gms.maps.model.BitmapDescriptor
@@ -50,7 +51,8 @@ fun DriverMapMyLocationContent(
 
     LaunchedEffect(key1 = isMapReady) {
         if (isMapReady) {
-            myLocationMarkerDescriptor =  context.bitmapDescriptorFromVector(R.drawable.icon_taxi, 130, 193)
+            myLocationMarkerDescriptor =
+                context.bitmapDescriptorFromVector(R.drawable.icon_taxi, 130, 193)
         }
     }
 
@@ -64,8 +66,7 @@ fun DriverMapMyLocationContent(
     Box {
         GoogleMap(
             modifier = Modifier
-                .fillMaxSize()
-            ,cameraPositionState = cameraPositionState,
+                .fillMaxSize(), cameraPositionState = cameraPositionState,
             properties = mapProperties,
             onMapLoaded = {
                 isMapReady = true
@@ -81,5 +82,17 @@ fun DriverMapMyLocationContent(
 
             }
         }
+        DefaultButton(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            text = if (vm.isSocketConnected) "Desconectarse" else "Conectarse",
+            onClick = {
+                if (vm.isSocketConnected) {
+                    vm.disconnectSocket()
+                } else {
+                    vm.connectSocket()
+                }
+            },
+        )
     }
+
 }

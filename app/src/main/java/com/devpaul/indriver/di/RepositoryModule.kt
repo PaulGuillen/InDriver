@@ -8,15 +8,18 @@ import com.devpaul.indriver.data.datasource.remote.GoogleMapService
 import com.devpaul.indriver.data.datasource.remote.UserService
 import com.devpaul.indriver.data.repository.AuthRepositoryImpl
 import com.devpaul.indriver.data.repository.LocationRepositoryImpl
+import com.devpaul.indriver.data.repository.SocketRepositoryImpl
 import com.devpaul.indriver.data.repository.UserRepositoryImpl
 import com.devpaul.indriver.domain.repository.AuthRepository
 import com.devpaul.indriver.domain.repository.LocationRepository
+import com.devpaul.indriver.domain.repository.SocketRepository
 import com.devpaul.indriver.domain.repository.UserRepository
 import com.google.android.libraries.places.api.net.PlacesClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.socket.client.Socket
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -46,4 +49,8 @@ object RepositoryModule {
             geoCoder = geocoder,
             googleMapsService = googleMapsService
         )
+
+    @Provides
+    fun provideSocket(socket: Socket): SocketRepository =
+        SocketRepositoryImpl(socket = socket)
 }
